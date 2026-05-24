@@ -176,6 +176,9 @@
         .plux-icon {
             background: linear-gradient(135deg, #9f7aea, #6b46c1);
         }
+        .premium-icon {
+            background: linear-gradient(135deg, #f6ad55, #ed8936);
+        }
 
         .card-header h2 {
             font-weight: 700;
@@ -216,6 +219,9 @@
         .plux-card .feature-list li::before {
             color: #9f7aea;
         }
+        .premium-card .feature-list li::before {
+            color: #ed8936;
+        }
 
         .btn {
             display: inline-block;
@@ -250,6 +256,16 @@
             background: #6b46c1;
             transform: scale(1.02);
             box-shadow: 0 10px 20px rgba(128, 90, 213, 0.35);
+        }
+        .btn-premium {
+            background: #ed8936;
+            color: white;
+            box-shadow: 0 8px 16px rgba(237, 137, 54, 0.3);
+        }
+        .btn-premium:hover {
+            background: #dd6b20;
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(237, 137, 54, 0.4);
         }
         .btn-outline {
             background: transparent;
@@ -389,6 +405,27 @@
                 </div>
                 <div class="version-badge">最新 2026-07-06 正在开发</div>
             </div>
+
+            <!-- 付费插件购买卡片 -->
+            <div class="plugin-card premium-card">
+                <div class="card-header">
+                    <div class="card-icon premium-icon">💎</div>
+                    <h2>付费插件</h2>
+                </div>
+                <div class="tagline">高级专属功能 · 持续更新与技术支持</div>
+                <ul class="feature-list">
+                    <li>公会战与跨服同步扩展</li>
+                    <li>粒子特效定制包与音效包</li>
+                    <li>反作弊深度检测模块</li>
+                    <li>VIP 经济与抽奖系统</li>
+                    <li>专属技术支持与优先更新</li>
+                </ul>
+                <div>
+                    <a href="#" class="btn btn-premium">🛒 前往购买</a>
+                    <a href="#" class="btn btn-outline">查看详情</a>
+                </div>
+                <div class="version-badge">终身许可 · 支持支付宝/微信/PayPal</div>
+            </div>
         </div>
 
         <!-- 通用下载信息 -->
@@ -406,7 +443,9 @@
     <footer>
         <p>© 2026 IceCloud & Plux Dev · 本网站与 Mojang 或 Microsoft 无关。</p>
         <p style="margin-top: 0.5rem;">
-            <a href="#">GitHub</a> · <a href="#">Discord</a> · <a href="#">QQGroup</a>
+            <a href="https://github.com/yaxzer21145" target="_blank" rel="noopener noreferrer">GitHub</a> · 
+            <a href="https://discord.gg/BJS7KdSG" target="_blank" rel="noopener noreferrer">Discord</a> · 
+            <a href="https://qm.qq.com/q/Kfelqf0iEs" target="_blank" rel="noopener noreferrer">QQGroup</a>
         </p>
     </footer>
 </body>
