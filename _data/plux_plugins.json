@@ -5,5 +5,12 @@
     "mc_version": "1.7.10 - 26.1",
     "date": "2026-06-07",
     "download_url": "https://raw.githubusercontent.com/IceCloudPlux/IceCloudPlux.github.io/main/plugins/FairPixelAntiCheat-2.5a.jar"
+  },
+  {
+    "title": "PluxLogin",
+    "version": "v2.0.0",
+    "mc_version": "1.7.10 - 26.1",
+    "date": "2026-06-07",
+    "download_url": "https://raw.githubusercontent.com/IceCloudPlux/IceCloudPlux.github.io/main/plugins/PluxLogin-2.0.0.jar"
   }
 ]
