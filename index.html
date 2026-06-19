@@ -4,11 +4,202 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IceCloud & Plux · 官网</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ========== 人机验证层 ========== */
+        #verify-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(30,41,59,0.95) 0%, #0f172a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .verify-card {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 20px;
+            padding: 2.5rem 2rem 2rem;
+            width: 420px;
+            max-width: 90vw;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .verify-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .shield-icon {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            color: #F6821F;
+        }
+
+        .verify-header-text h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0 0 0.2rem;
+        }
+
+        .verify-header-text p {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .challenge-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0 1.8rem;
+            padding: 1rem 1.2rem;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            user-select: none;
+            pointer-events: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .challenge-area.clickable {
+            pointer-events: auto;
+        }
+
+        .challenge-area.clickable:hover {
+            background: #f1f5f9;
+        }
+
+        .verify-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2.5px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .verify-circle .spinner-ring {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2.5px solid transparent;
+            border-top-color: #3b82f6;
+            animation: spin 0.8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .verify-circle .checkmark {
+            width: 20px;
+            height: 20px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            color: white;
+            z-index: 1;
+        }
+
+        .verify-circle.loading .spinner-ring { opacity: 1; }
+
+        .verify-circle.success {
+            background: #16a34a;
+            border-color: #16a34a;
+        }
+        .verify-circle.success .checkmark { opacity: 1; }
+        .verify-circle.success .spinner-ring { opacity: 0; animation: none; }
+
+        .verify-square-btn {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 6px;
+            border: 2.5px solid #cbd5e1;
+            background: transparent;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .verify-square-btn.show { display: block; }
+
+        .challenge-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .error-banner {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 0.65rem 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        .error-banner svg { flex-shrink: 0; width: 18px; height: 18px; color: #dc2626; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .verify-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        .verify-footer .domain { opacity: 0.7; }
+
+        .verify-footer .links a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin-left: 1rem;
+        }
+
+        .verify-footer .links a:hover { text-decoration: underline; color: #64748b; }
+
+        .verify-overlay-hidden { opacity: 0; pointer-events: none; }
+
+        /* ========== 原有网站样式 ========== */
+        /* 请将您之前的完整 CSS 粘贴到这里（导航、卡片、页脚等） */
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #f0f4f8 0%, #e9eef3 100%);
@@ -16,6 +207,8 @@
             line-height: 1.6;
             min-height: 100vh;
         }
+        #main-content { display: none; }
+
         header {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
@@ -30,6 +223,7 @@
             z-index: 100;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
         }
+
         .logo {
             display: flex;
             align-items: center;
@@ -38,13 +232,20 @@
             font-size: 1.25rem;
             color: #2d3748;
         }
-        .logo-img {
+
+        .logo-icon {
             width: 38px;
             height: 38px;
+            background: linear-gradient(135deg, #63b3ed, #4299e1);
             border-radius: 10px;
-            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
             box-shadow: 0 6px 14px rgba(66, 153, 225, 0.3);
         }
+
         nav { display: flex; gap: 2rem; align-items: center; }
         nav a {
             text-decoration: none;
@@ -52,30 +253,12 @@
             font-weight: 600;
             font-size: 0.9rem;
             transition: color 0.2s;
-            position: relative;
         }
         nav a:hover { color: #3182ce; }
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #3182ce;
-            transition: width 0.2s;
-            border-radius: 1px;
-        }
-        nav a:hover::after { width: 100%; }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 3rem 1.5rem;
-        }
-        .hero {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 3rem 1.5rem; }
+
+        .hero { text-align: center; margin-bottom: 4rem; }
         .hero h1 {
             font-size: 2.8rem;
             font-weight: 800;
@@ -84,14 +267,8 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 0.8rem;
-            letter-spacing: -0.5px;
         }
-        .hero .subtitle {
-            font-size: 1.1rem;
-            color: #5a6c7d;
-            max-width: 600px;
-            margin: 0 auto 1.5rem;
-        }
+        .hero .subtitle { font-size: 1.1rem; color: #5a6c7d; max-width: 600px; margin: 0 auto 1.5rem; }
         .hero-badge {
             display: inline-block;
             background: #bee3f8;
@@ -100,14 +277,15 @@
             border-radius: 20px;
             font-weight: 600;
             font-size: 0.85rem;
-            letter-spacing: 0.3px;
         }
+
         .plugin-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
             margin: 3rem 0;
         }
+
         .plugin-card {
             background: white;
             border-radius: 24px;
@@ -118,117 +296,74 @@
             flex-direction: column;
             border: 1px solid rgba(0, 0, 0, 0.04);
         }
+
         .plugin-card:hover {
             transform: translateY(-6px);
             box-shadow: 0 25px 45px rgba(0, 0, 0, 0.08), 0 10px 20px rgba(0, 0, 0, 0.04);
         }
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
+
+        .card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
         .card-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            color: white;
+            width: 56px; height: 56px; border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; color: white;
             box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
         }
+
         .ice-icon { background: linear-gradient(135deg, #63b3ed, #3182ce); }
         .plux-icon { background: linear-gradient(135deg, #9f7aea, #6b46c1); }
         .premium-icon { background: linear-gradient(135deg, #f6ad55, #ed8936); }
+
         .card-header h2 { font-weight: 700; font-size: 1.6rem; color: #1a202c; }
         .tagline { font-weight: 600; color: #4a5568; margin-bottom: 1.2rem; font-size: 0.9rem; }
+
         .feature-list {
-            list-style: none;
-            margin: 0.8rem 0 1.8rem;
-            flex: 1;
+            list-style: none; margin: 0.8rem 0 1.8rem; flex: 1;
         }
+
         .feature-list li {
-            padding: 0.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            color: #4a5568;
-            font-size: 0.95rem;
-            border-bottom: 1px solid #f7fafc;
+            padding: 0.5rem 0; display: flex; align-items: center; gap: 0.6rem;
+            color: #4a5568; font-size: 0.95rem; border-bottom: 1px solid #f7fafc;
         }
+
         .feature-list li:last-child { border-bottom: none; }
         .feature-list li::before {
-            content: "✓";
-            font-weight: bold;
-            color: #4299e1;
-            font-size: 1rem;
-            width: 20px;
+            content: "✓"; font-weight: bold; color: #4299e1; font-size: 1rem; width: 20px;
         }
-        .plux-card .feature-list li::before { color: #9f7aea; }
-        .premium-card .feature-list li::before { color: #ed8936; }
+
         .btn {
-            display: inline-block;
-            padding: 0.75rem 1.6rem;
-            border-radius: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.2s;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
+            display: inline-block; padding: 0.75rem 1.6rem; border-radius: 14px;
+            font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; font-size: 0.9rem;
+            margin-right: 0.5rem; margin-bottom: 0.5rem;
         }
-        .btn-primary {
-            background: #3182ce;
-            color: white;
-            box-shadow: 0 8px 16px rgba(49, 130, 206, 0.25);
-        }
-        .btn-primary:hover { background: #2b6cb0; transform: scale(1.02); box-shadow: 0 10px 20px rgba(49, 130, 206, 0.35); }
-        .btn-secondary {
-            background: #805ad5;
-            color: white;
-            box-shadow: 0 8px 16px rgba(128, 90, 213, 0.25);
-        }
-        .btn-secondary:hover { background: #6b46c1; transform: scale(1.02); box-shadow: 0 10px 20px rgba(128, 90, 213, 0.35); }
-        .btn-premium {
-            background: #ed8936;
-            color: white;
-            box-shadow: 0 8px 16px rgba(237, 137, 54, 0.3);
-        }
-        .btn-premium:hover { background: #dd6b20; transform: scale(1.02); box-shadow: 0 10px 20px rgba(237, 137, 54, 0.4); }
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #cbd5e0;
-            color: #4a5568;
-        }
+
+        .btn-primary { background: #3182ce; color: white; box-shadow: 0 8px 16px rgba(49,130,206,0.25); }
+        .btn-primary:hover { background: #2b6cb0; transform: scale(1.02); }
+
+        .btn-secondary { background: #805ad5; color: white; box-shadow: 0 8px 16px rgba(128,90,213,0.25); }
+        .btn-secondary:hover { background: #6b46c1; transform: scale(1.02); }
+
+        .btn-premium { background: #ed8936; color: white; box-shadow: 0 8px 16px rgba(237,137,54,0.3); }
+        .btn-premium:hover { background: #dd6b20; transform: scale(1.02); }
+
+        .btn-outline { background: transparent; border: 2px solid #cbd5e0; color: #4a5568; }
         .btn-outline:hover { border-color: #a0aec0; background: #f7fafc; }
+
         .version-badge { font-size: 0.8rem; color: #718096; margin-top: 1rem; font-weight: 500; }
+
         .info-box {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            margin-top: 2rem;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.03);
-            text-align: center;
-            border: 1px solid #edf2f7;
+            background: white; border-radius: 20px; padding: 2rem; margin-top: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.03); text-align: center; border: 1px solid #edf2f7;
         }
-        .info-box h3 { font-weight: 700; margin-bottom: 0.8rem; color: #1a202c; }
-        .info-box p { color: #5a6c7d; margin-bottom: 1.2rem; }
+
         footer {
-            text-align: center;
-            padding: 2rem;
-            background: white;
-            border-top: 1px solid #edf2f7;
-            color: #a0aec0;
-            font-size: 0.85rem;
-            margin-top: 3rem;
+            text-align: center; padding: 2rem; background: white; border-top: 1px solid #edf2f7;
+            color: #a0aec0; font-size: 0.85rem; margin-top: 3rem;
         }
-        footer a { color: #4a5568; text-decoration: none; font-weight: 600; }
+
+        footer a { color: #4a5568; font-weight: 600; text-decoration: none; }
         footer a:hover { color: #3182ce; }
+
         @media (max-width: 650px) {
             header { flex-direction: column; gap: 1rem; padding: 1rem; }
             nav { gap: 1.2rem; }
@@ -237,110 +372,291 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="images/logo.png" alt="IceCloud & Plux" class="logo-img">
-            IceCloud & Plux
-        </div>
-        <nav>
-            <a href="#">首页</a>
-            <a href="#plugins">插件</a>
-            <a href="#">文档</a>
-            <a href="community.html">社区</a>
-        </nav>
-    </header>
 
-    <main class="container">
-        <section class="hero">
-            <h1>IceCloud & Plux</h1>
-            <p class="subtitle">为 Minecraft Java 服务器打造的现代插件系列，覆盖世界控制与视觉特效，稳定兼容 Paper、Spigot、Purpur、Fotia等核心。</p>
-            <span class="hero-badge">🛠️ 支持 1.7.10 - 26.x · Java 8+</span>
-        </section>
-
-        <div class="plugin-grid" id="plugins">
-            <!-- IceCloud 卡片 -->
-            <div class="plugin-card">
-                <div class="card-header">
-                    <div class="card-icon ice-icon">❄️</div>
-                    <h2>IceCloud 系列</h2>
+    <!-- 人机验证层 -->
+    <div id="verify-overlay">
+        <div class="verify-card">
+            <div class="verify-header">
+                <svg class="shield-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                </svg>
+                <div class="verify-header-text">
+                    <h2>正在检查连接安全性</h2>
+                    <p>FairPixelAB 正在验证您的浏览器是否安全，请稍候...</p>
                 </div>
-                <div class="tagline">多种实用插件 · 工具类偏多</div>
-                <ul class="feature-list">
-                    <li>功能众多支持 GUI 的公会系统</li>
-                    <li>高性能低占用的性能优化系统</li>
-                    <li>超越 LiteBans 的免费国产处罚系统</li>
-                    <li>高级多功能的登录注册邮箱系统</li>
-                    <li>......以及更多！</li>
-                </ul>
-                <div>
-                    <a href="icecloud-download.html" class="btn btn-primary">下载 IceCloud</a>
-                    <a href="#" class="btn btn-outline">文档</a>
-                </div>
-                <div class="version-badge">最新 2026-05-24 就绪</div>
             </div>
 
-            <!-- Plux 卡片 -->
-            <div class="plugin-card plux-card">
-                <div class="card-header">
-                    <div class="card-icon plux-icon">✨</div>
-                    <h2>Plux</h2>
+            <div class="challenge-area" id="challengeArea">
+                <div class="verify-circle loading" id="verifyCircle">
+                    <div class="spinner-ring"></div>
+                    <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
                 </div>
-                <div class="tagline">粒子特效 · 视觉与交互增强</div>
-                <ul class="feature-list">
-                    <li>200+ 起床战争特效</li>
-                    <li>假人互动 NPC 插件</li>
-                    <li>自定义 GUI 菜单系统</li>
-                    <li>蓝海级生存领地系统</li>
-                    <li>......以及更多！</li>
-                </ul>
-                <div>
-                    <a href="plux-download.html" class="btn btn-secondary">下载 Plux</a>
-                    <a href="#" class="btn btn-outline">文档</a>
-                </div>
-                <div class="version-badge">最新 2026-07-06 正在开发</div>
+                <div class="verify-square-btn" id="verifySquareBtn"></div>
+                <span class="challenge-text" id="challengeText">正在验证…</span>
             </div>
 
-            <!-- 付费插件卡片 -->
-            <div class="plugin-card premium-card">
-                <div class="card-header">
-                    <div class="card-icon premium-icon">💎</div>
-                    <h2>付费插件</h2>
+            <div id="turnstile-container" style="display: none;"></div>
+            <div id="errorContainer"></div>
+
+            <div class="verify-footer">
+                <span class="domain">icecloudplux.github.io</span>
+                <div class="links">
+                    <a href="#">隐私政策</a>
+                    <a href="#">条款</a>
+                    <a href="#">反馈</a>
                 </div>
-                <div class="tagline">高级专属功能 · 持续更新与技术支持</div>
-                <ul class="feature-list">
-                    <li>公会战与跨服同步扩展</li>
-                    <li>粒子特效定制包与音效包</li>
-                    <li>反作弊深度检测模块</li>
-                    <li>VIP 经济与抽奖系统</li>
-                    <li>专属技术支持与优先更新</li>
-                </ul>
-                <div>
-                    <a href="#" class="btn btn-premium">购买</a>
-                    <a href="#" class="btn btn-outline">查看详情</a>
-                </div>
-                <div class="version-badge">终身许可 · 支持支付宝/微信/PayPal</div>
             </div>
         </div>
+    </div>
 
-        <div class="info-box" id="download">
-            <h3>🔧 全系列兼容，即装即用</h3>
-            <p>所有插件均遵循 MIT 协议开源，可免费使用与修改。欢迎到 GitHub 提交反馈或贡献代码。</p>
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                <a href="icecloud-download.html" class="btn btn-primary">📦 下载 IceCloud</a>
-                <a href="plux-download.html" class="btn btn-secondary">📦 下载 Plux</a>
-                <a href="#" class="btn btn-outline">📖 使用教程</a>
+    <!-- 原有主站内容 -->
+    <div id="main-content">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">⛏️</div>
+                IceCloud & Plux
             </div>
-            <p style="margin-top: 1.2rem; font-size:0.85rem; color:#718096;">兼容 全版本 和 全核心 · 需要 Java 8+</p>
-        </div>
-    </main>
+            <nav>
+                <a href="#">首页</a>
+                <a href="#plugins">插件</a>
+                <a href="#">文档</a>
+                <a href="community.html">社区</a>
+            </nav>
+        </header>
 
-    <footer>
-        <p>© 2026 IceCloud & Plux Dev · 本网站与 Mojang 或 Microsoft 无关。</p>
-        <p style="margin-top: 0.5rem;">
-            <a href="https://github.com/yaxzer21145" target="_blank" rel="noopener noreferrer">GitHub</a> · 
-            <a href="https://discord.gg/BJS7KdSG" target="_blank" rel="noopener noreferrer">Discord</a> · 
-            <a href="https://qm.qq.com/q/Kfelqf0iEs" target="_blank" rel="noopener noreferrer">QQGroup</a>
-        </p>
-    </footer>
+        <main class="container">
+            <section class="hero">
+                <h1>IceCloud & Plux</h1>
+                <p class="subtitle">为 Minecraft Java 服务器打造的现代插件系列，覆盖世界控制与视觉特效，稳定兼容 Paper、Spigot、Purpur、Fotia等核心。</p>
+                <span class="hero-badge">🛠️ 支持 1.7.10 - 26.x · Java 8+</span>
+            </section>
+
+            <div class="plugin-grid" id="plugins">
+                <!-- IceCloud 卡片 -->
+                <div class="plugin-card">
+                    <div class="card-header">
+                        <div class="card-icon ice-icon">❄️</div>
+                        <h2>IceCloud 系列</h2>
+                    </div>
+                    <div class="tagline">多种实用插件 · 工具类偏多</div>
+                    <ul class="feature-list">
+                        <li>功能众多支持 GUI 的公会系统</li>
+                        <li>高性能低占用的性能优化系统</li>
+                        <li>超越 LiteBans 的免费国产处罚系统</li>
+                        <li>高级多功能的登录注册邮箱系统</li>
+                        <li>......以及更多！</li>
+                    </ul>
+                    <div>
+                        <a href="icecloud-download.html" class="btn btn-primary">下载 IceCloud</a>
+                        <a href="#" class="btn btn-outline">文档</a>
+                    </div>
+                    <div class="version-badge">最新 2026-05-24 就绪</div>
+                </div>
+
+                <!-- Plux 卡片 -->
+                <div class="plugin-card">
+                    <div class="card-header">
+                        <div class="card-icon plux-icon">✨</div>
+                        <h2>Plux</h2>
+                    </div>
+                    <div class="tagline">粒子特效 · 视觉与交互增强</div>
+                    <ul class="feature-list">
+                        <li>200+ 起床战争特效</li>
+                        <li>假人互动 NPC 插件</li>
+                        <li>自定义 GUI 菜单系统</li>
+                        <li>蓝海级生存领地系统</li>
+                        <li>......以及更多！</li>
+                    </ul>
+                    <div>
+                        <a href="plux-download.html" class="btn btn-secondary">下载 Plux</a>
+                        <a href="#" class="btn btn-outline">文档</a>
+                    </div>
+                    <div class="version-badge">最新 2026-07-06 正在开发</div>
+                </div>
+
+                <!-- 付费插件卡片 -->
+                <div class="plugin-card">
+                    <div class="card-header">
+                        <div class="card-icon premium-icon">💎</div>
+                        <h2>付费插件</h2>
+                    </div>
+                    <div class="tagline">高级专属功能 · 持续更新与技术支持</div>
+                    <ul class="feature-list">
+                        <li>公会战与跨服同步扩展</li>
+                        <li>粒子特效定制包与音效包</li>
+                        <li>反作弊深度检测模块</li>
+                        <li>VIP 经济与抽奖系统</li>
+                        <li>专属技术支持与优先更新</li>
+                    </ul>
+                    <div>
+                        <a href="#" class="btn btn-premium">🛒 前往购买</a>
+                        <a href="#" class="btn btn-outline">查看详情</a>
+                    </div>
+                    <div class="version-badge">终身许可 · 支持支付宝/微信/PayPal</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>🔧 全系列兼容，即装即用</h3>
+                <p>所有插件均遵循 MIT 协议开源，可免费使用与修改。欢迎到 GitHub 提交反馈或贡献代码。</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="icecloud-download.html" class="btn btn-primary">📦 下载 IceCloud</a>
+                    <a href="plux-download.html" class="btn btn-secondary">📦 下载 Plux</a>
+                    <a href="#" class="btn btn-outline">📖 使用教程</a>
+                </div>
+                <p style="margin-top: 1.2rem; font-size:0.85rem; color:#718096;">兼容 全版本 和 全核心 · 需要 Java 8+</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2026 IceCloud & Plux Dev · 本网站与 Mojang 或 Microsoft 无关。</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="https://github.com/yaxzer21145" target="_blank" rel="noopener noreferrer">GitHub</a> · 
+                <a href="https://discord.gg/BJS7KdSG" target="_blank" rel="noopener noreferrer">Discord</a> · 
+                <a href="https://qm.qq.com/q/Kfelqf0iEs" target="_blank" rel="noopener noreferrer">QQGroup</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            // ⚠️ 替换为你的 Cloudflare Turnstile Site Key
+            const SITE_KEY = '0x4AAAAAADnifVGaRTV7QUMJ';
+
+            const overlay = document.getElementById('verify-overlay');
+            const mainContent = document.getElementById('main-content');
+            const challengeArea = document.getElementById('challengeArea');
+            const circle = document.getElementById('verifyCircle');
+            const squareBtn = document.getElementById('verifySquareBtn');
+            const textEl = document.getElementById('challengeText');
+            const errorContainer = document.getElementById('errorContainer');
+            const turnstileContainer = document.getElementById('turnstile-container');
+
+            let isVerifying = false;
+            let isSuccess = false;
+            let showClickableTimer = null;
+
+            function showCircleLoading() {
+                circle.style.display = 'flex';
+                squareBtn.classList.remove('show');
+                squareBtn.style.display = 'none';
+                circle.classList.add('loading');
+                circle.classList.remove('success');
+            }
+
+            function showSquareButton() {
+                circle.style.display = 'none';
+                squareBtn.classList.add('show');
+                squareBtn.style.display = 'block';
+            }
+
+            function showCircleSuccess() {
+                circle.style.display = 'flex';
+                squareBtn.classList.remove('show');
+                squareBtn.style.display = 'none';
+                circle.classList.remove('loading');
+                circle.classList.add('success');
+            }
+
+            function showError(msg) {
+                errorContainer.innerHTML = '';
+                const banner = document.createElement('div');
+                banner.className = 'error-banner';
+                banner.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span>${msg}</span>
+                `;
+                errorContainer.appendChild(banner);
+                setTimeout(() => {
+                    errorContainer.innerHTML = '';
+                    resetToInitial();
+                }, 3000);
+            }
+
+            function resetToInitial() {
+                if (isSuccess) return;
+                showCircleLoading();
+                textEl.textContent = '正在验证…';
+                challengeArea.classList.remove('clickable');
+                isVerifying = false;
+                startClickableTimer();
+            }
+
+            function startClickableTimer() {
+                if (showClickableTimer) clearTimeout(showClickableTimer);
+                showClickableTimer = setTimeout(() => {
+                    if (isVerifying || isSuccess) return;
+                    showSquareButton();
+                    textEl.textContent = '点击验证';
+                    challengeArea.classList.add('clickable');
+                }, 2000);
+            }
+
+            function performTurnstileChallenge() {
+                turnstileContainer.innerHTML = '';
+                if (window.turnstile) {
+                    window.turnstile.render(turnstileContainer, {
+                        sitekey: SITE_KEY,
+                        theme: 'light',
+                        callback: function(token) {
+                            isSuccess = true;
+                            isVerifying = false;
+                            showCircleSuccess();
+                            textEl.textContent = '验证通过';
+                            challengeArea.classList.remove('clickable');
+                            if (showClickableTimer) clearTimeout(showClickableTimer);
+                            setTimeout(() => {
+                                overlay.classList.add('verify-overlay-hidden');
+                                mainContent.style.display = 'block';
+                                setTimeout(() => overlay.style.display = 'none', 500);
+                            }, 600);
+                        },
+                        'error-callback': function() {
+                            showError('验证失败，请重试');
+                            isVerifying = false;
+                            showSquareButton();
+                            textEl.textContent = '点击验证';
+                            challengeArea.classList.add('clickable');
+                        },
+                        'expired-callback': function() {
+                            showError('验证已过期，请重新点击');
+                            resetToInitial();
+                        }
+                    });
+                }
+            }
+
+            function startVerification() {
+                if (isVerifying || isSuccess || !challengeArea.classList.contains('clickable')) return;
+                isVerifying = true;
+                challengeArea.classList.remove('clickable');
+                showCircleLoading();
+                textEl.textContent = '验证中…';
+                performTurnstileChallenge();
+            }
+
+            challengeArea.addEventListener('click', startVerification);
+            challengeArea.setAttribute('tabindex', '0');
+            challengeArea.setAttribute('role', 'button');
+            challengeArea.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    startVerification();
+                }
+            });
+
+            // 启动
+            textEl.textContent = '正在验证…';
+            showCircleLoading();
+            challengeArea.classList.remove('clickable');
+            startClickableTimer();
+        })();
+    </script>
 </body>
 </html>
