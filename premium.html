@@ -6,22 +6,13 @@
   <title>IceCloud & Plux · 付费插件商城</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; color: #2d3748; line-height: 1.6; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f4f8; color: #2d3748; line-height: 1.6; }
     header { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
     .logo { font-weight: 700; font-size: 1.2rem; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
     .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #f6ad55, #ed8936); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
-    #auth-area { display: flex; align-items: center; gap: 1rem; }
-    .auth-btn { padding: 0.5rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; font-size: 0.9rem; transition: background 0.2s; }
-    .login-btn { background: #3182ce; color: white; }
-    .login-btn:hover { background: #2b6cb0; }
-    .logout-btn { background: transparent; border: 1px solid #cbd5e0; color: #4a5568; }
-    .logout-btn:hover { background: #f1f5f9; }
-    .user-info { display: flex; align-items: center; gap: 0.5rem; }
-    .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0; }
-    .user-name { font-weight: 500; color: #1e293b; font-size: 0.9rem; }
     .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
     .hero { text-align: center; margin-bottom: 2rem; }
-    .hero h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #dd6b20, #ed8936); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; }
+    .hero h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #dd6b20, #ed8936); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .hero p { color: #5a6c7d; font-size: 1.1rem; }
     .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin: 2rem 0; }
     .product-card { background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.06); text-align: center; display: flex; flex-direction: column; }
@@ -33,17 +24,17 @@
     .features li::before { content: "✓"; color: #38a169; font-weight: bold; }
     .btn-buy { margin-top: auto; padding: 0.8rem; background: #ed8936; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; }
     .btn-buy:hover { background: #dd6b20; }
-    .btn-buy:disabled { background: #cbd5e0; cursor: not-allowed; }
+
+    /* 订单表单弹窗 */
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-    .modal-content { background: white; padding: 2rem; border-radius: 16px; max-width: 400px; text-align: center; }
+    .modal-content { background: white; padding: 2rem; border-radius: 16px; max-width: 400px; width: 90%; }
     .modal-content h3 { margin-bottom: 1rem; }
-    .modal-content p { margin: 0.5rem 0; }
-    .modal-buttons { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; }
-    .modal-buttons button { padding: 0.6rem 1.5rem; border-radius: 8px; cursor: pointer; border: none; font-weight: 600; }
-    .license-key-display { margin-top: 1rem; padding: 0.5rem; background: #f0fdf4; border-radius: 8px; font-family: monospace; font-size: 1.1rem; }
+    .modal-content input, .modal-content textarea { width: 100%; padding: 0.7rem; margin: 0.5rem 0; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem; }
+    .modal-buttons { display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; }
+    .modal-buttons button { padding: 0.6rem 1.5rem; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
+    .success-msg { color: #16a34a; font-weight: 600; margin-top: 1rem; display: none; }
     footer { text-align: center; margin-top: 3rem; padding: 1.5rem; color: #94a3b8; background: white; border-top: 1px solid #edf2f7; }
     footer a { color: #3182ce; text-decoration: none; margin: 0 0.5rem; }
-    .loading-text { color: #718096; font-size: 0.9rem; }
   </style>
 </head>
 <body>
@@ -52,118 +43,50 @@
       <div class="logo-icon">💎</div>
       IceCloud & Plux · 商城
     </a>
-    <div id="auth-area">
-      <span class="loading-text">加载中...</span>
-    </div>
   </header>
 
   <div class="container">
     <div class="hero">
       <h1>💎 付费插件商城</h1>
-      <p>登录后即可购买，自动生成许可证密钥</p>
+      <p>选择插件后填写信息，即可在网页内完成下单，我们将在 3 天内邮件发货</p>
     </div>
-
     <div class="product-grid" id="productList"></div>
   </div>
 
-  <!-- 购买确认弹窗 -->
-  <div class="modal" id="confirmModal">
+  <!-- 订单填写弹窗 -->
+  <div class="modal" id="orderModal">
     <div class="modal-content">
-      <h3>确认购买</h3>
-      <p id="confirmText"></p>
+      <h3>📧 提交订单</h3>
+      <p id="orderProductName" style="font-weight:600;"></p>
+      <input type="text" id="mcUsername" placeholder="我的世界用户名（必填）" required>
+      <input type="email" id="email" placeholder="联系邮箱（必填）" required>
+      <textarea id="notes" placeholder="备注 / 特殊需求（选填）" rows="3"></textarea>
       <div class="modal-buttons">
-        <button style="background:#cbd5e0; color:#1e293b;" onclick="closeModal()">取消</button>
-        <button id="confirmBtn" style="background:#ed8936; color:white;">确认购买</button>
+        <button onclick="closeModal()" style="background:#cbd5e0; color:#1e293b;">取消</button>
+        <button id="submitOrderBtn" style="background:#ed8936; color:white;">提交订单</button>
       </div>
-      <div id="licenseResult" class="license-key-display" style="display:none;"></div>
+      <div class="success-msg" id="successMsg">✅ 订单已提交！我们将在 3 天内联系您。</div>
     </div>
   </div>
 
   <footer>
     <p>© 2026 IceCloud & Plux Dev · 本网站与 Mojang 或 Microsoft 无关。</p>
-    <p>
-      <a href="index.html">返回主站</a>
-      <a href="pages/dashboard.html">用户中心</a>
-      <a href="#">退款政策</a>
-    </p>
+    <p><a href="index.html">返回主站</a></p>
   </footer>
 
   <script>
     (function() {
-      // ==================== 配置 ====================
-      const API_BASE = 'https://qwqwq.pythonanywhere.com';   // 你的 Flask 后端地址
-      const authArea = document.getElementById('auth-area');
-      let currentUser = null;   // 存储用户信息 { login, avatar_url }
+      // ⚠️ 将这里的 YOUR_FORM_ID 替换为你在 Formspree 获得的 ID
+      const FORM_ID = 'mrewroaw';  // 例如 'xrgvwwkp'
+      const FORM_URL = `https://formspree.io/f/${FORM_ID}`;
 
-      // ==================== 登录/用户 UI ====================
-      function showLoading() {
-        authArea.innerHTML = '<span class="loading-text">加载中...</span>';
-      }
-
-      function showLoginButton() {
-        authArea.innerHTML = `
-          <a href="${API_BASE}/login" class="auth-btn login-btn">
-            🔐 通过 GitHub 登录
-          </a>`;
-      }
-
-      function showUserInfo(user) {
-        const avatar = user.avatar_url || '';
-        const name = user.login || user.username || '用户';
-        authArea.innerHTML = `
-          <div class="user-info">
-            ${avatar ? `<img src="${avatar}" alt="头像" class="user-avatar">` : ''}
-            <span class="user-name">${name}</span>
-            <a href="${API_BASE}/logout" class="auth-btn logout-btn">退出</a>
-          </div>`;
-        // 启用所有购买按钮
-        document.querySelectorAll('.btn-buy').forEach(btn => {
-          btn.disabled = false;
-          btn.style.cursor = 'pointer';
-          btn.style.background = '#ed8936';
-        });
-      }
-
-      async function checkLogin() {
-        try {
-          const res = await fetch(`${API_BASE}/user`, {
-            credentials: 'include'   // 携带 session cookie
-          });
-          if (!res.ok) {
-            showLoginButton();
-            return;
-          }
-          const data = await res.json();
-          if (data.user) {
-            currentUser = data.user;
-            showUserInfo(currentUser);
-          } else {
-            showLoginButton();
-          }
-        } catch (e) {
-          console.error('用户状态检查失败:', e);
-          showLoginButton();   // 网络错误时也显示登录按钮
-        }
-      }
-
-      // 处理登录成功回调
-      function handleLoginSuccess() {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('login') === 'success') {
-          window.history.replaceState({}, document.title, window.location.pathname);
-          alert('✅ 登录成功！您现在可以购买插件。');
-          // 重新检查登录状态以更新界面
-          checkLogin();
-        }
-      }
-
-      // ==================== 产品列表与购买 ====================
       const products = [
         { id: 'guild-pro', name: '高级公会系统', price: 29.99, features: ['公会战 & 跨服同步', 'GUI 管理面板', '公会银行 & 经济系统', '排行榜 & 成就系统', '终身免费更新'] },
         { id: 'particle-pack', name: '粒子特效扩展包', price: 19.99, features: ['100+ 独家粒子模板', '音乐同步特效', '红石联动粒子', '自定义粒子编辑器', '终身免费更新'] },
         { id: 'anti-cheat', name: '高级反作弊系统', price: 39.99, features: ['深度行为检测', '自动封禁 & 告警', 'BungeeCord 支持', '详细日志记录', '终身免费更新'] }
       ];
 
+      // 渲染产品卡片
       const grid = document.getElementById('productList');
       products.forEach(p => {
         const card = document.createElement('div');
@@ -172,50 +95,79 @@
           <h3>${p.name}</h3>
           <div class="price">¥${p.price.toFixed(2)} <span>/ 永久</span></div>
           <ul class="features">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
-          <button class="btn-buy" disabled style="cursor:not-allowed; background:#cbd5e0;" onclick="openConfirm('${p.id}', '${p.name}', ${p.price})">🛒 立即购买（需登录）</button>
+          <button class="btn-buy" onclick="openOrder('${p.name}', ${p.price})">🛒 下单购买</button>
         `;
         grid.appendChild(card);
       });
 
-      // ==================== 购买弹窗 ====================
-      let currentProduct = null;
+      // 弹窗逻辑
+      const modal = document.getElementById('orderModal');
+      const orderProductName = document.getElementById('orderProductName');
+      const mcUsernameInput = document.getElementById('mcUsername');
+      const emailInput = document.getElementById('email');
+      const notesInput = document.getElementById('notes');
+      const submitBtn = document.getElementById('submitOrderBtn');
+      const successMsg = document.getElementById('successMsg');
 
-      window.openConfirm = function(id, name, price) {
-        if (!currentUser) {
-          alert('请先登录后再购买');
-          return;
-        }
-        currentProduct = { id, name, price };
-        document.getElementById('confirmText').textContent = `购买 ${name}，价格 ¥${price.toFixed(2)}，确认购买？`;
-        document.getElementById('confirmModal').style.display = 'flex';
-        document.getElementById('licenseResult').style.display = 'none';
+      window.openOrder = function(productName, price) {
+        orderProductName.textContent = `${productName} - ¥${price.toFixed(2)}`;
+        // 清空表单
+        mcUsernameInput.value = '';
+        emailInput.value = '';
+        notesInput.value = '';
+        successMsg.style.display = 'none';
+        submitBtn.disabled = false;
+        modal.style.display = 'flex';
       };
 
       window.closeModal = function() {
-        document.getElementById('confirmModal').style.display = 'none';
+        modal.style.display = 'none';
       };
 
-      document.getElementById('confirmBtn').addEventListener('click', function() {
-        if (!currentProduct) return;
-        // 模拟购买，生成随机许可证密钥
-        const fakeKey = 'IC-' + Math.random().toString(36).substring(2, 14).toUpperCase();
-        const resultDiv = document.getElementById('licenseResult');
-        resultDiv.innerHTML = `✅ 购买成功！许可证密钥：<strong>${fakeKey}</strong><br><small>请妥善保存，我们将在3天内通过邮箱发送正式密钥（如有绑定）。</small>`;
-        resultDiv.style.display = 'block';
-        // 禁用再次购买当前产品（可选）
-        this.disabled = true;
-        this.style.background = '#cbd5e0';
+      // 提交订单
+      submitBtn.addEventListener('click', async () => {
+        const username = mcUsernameInput.value.trim();
+        const email = emailInput.value.trim();
+        if (!username || !email) {
+          alert('请填写 Minecraft 用户名和联系邮箱');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '提交中...';
+
+        const formData = new FormData();
+        formData.append('product', orderProductName.textContent);
+        formData.append('mc_username', username);
+        formData.append('email', email);
+        formData.append('notes', notesInput.value.trim());
+
+        try {
+          const response = await fetch(FORM_URL, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          });
+          if (response.ok) {
+            successMsg.style.display = 'block';
+            submitBtn.style.display = 'none';
+            // 3秒后自动关闭
+            setTimeout(() => closeModal(), 3000);
+          } else {
+            alert('提交失败，请稍后重试或直接发送邮件至 3607483986@qq.com');
+          }
+        } catch (error) {
+          alert('网络错误，请稍后重试');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '提交订单';
+        }
       });
 
-      // 点击弹窗外部关闭
-      document.getElementById('confirmModal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
+      // 点击遮罩关闭
+      window.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
       });
-
-      // ==================== 初始化 ====================
-      showLoading();
-      checkLogin();
-      handleLoginSuccess();
     })();
   </script>
 </body>
