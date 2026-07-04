@@ -58,10 +58,10 @@
     <div class="modal-content">
       <h3>📧 提交订单</h3>
       <p id="orderProductName" style="font-weight:600;"></p>
-      <input type="text" id="正版名：" placeholder="正版用户名（必填）" required>
-      <input type="email" id="联系邮箱：" placeholder="联系邮箱（必填）" required>
-      <input type="qq" id="QQ/电话：" placeholder="QQ/电话（必填）" required>
-      <textarea id="备注" placeholder="备注 / 特殊需求（选填）" rows="3"></textarea>
+      <input type="text" id="mcUsername" placeholder="正版用户名（必填）" required>
+      <input type="email" id="email" placeholder="联系邮箱（必填）" required>
+      <input type="text" id="qq" placeholder="QQ/电话（必填）" required>
+      <textarea id="notes" placeholder="备注 / 特殊需求（选填）" rows="3"></textarea>
       <div class="modal-buttons">
         <button onclick="closeModal()" style="background:#cbd5e0; color:#1e293b;">取消</button>
         <button id="submitOrderBtn" style="background:#ed8936; color:white;">提交订单</button>
@@ -77,7 +77,7 @@
 
   <script>
     (function() {
-      const FORM_ID = 'mrewroaw';  // 例如 'xrgvwwkp'
+      const FORM_ID = 'mrewroaw';  // 你的 Formspree Form ID
       const FORM_URL = `https://formspree.io/f/${FORM_ID}`;
 
       const products = [
@@ -100,11 +100,12 @@
         grid.appendChild(card);
       });
 
-      // 弹窗逻辑
+      // 弹窗相关元素
       const modal = document.getElementById('orderModal');
       const orderProductName = document.getElementById('orderProductName');
       const mcUsernameInput = document.getElementById('mcUsername');
       const emailInput = document.getElementById('email');
+      const qqInput = document.getElementById('qq');
       const notesInput = document.getElementById('notes');
       const submitBtn = document.getElementById('submitOrderBtn');
       const successMsg = document.getElementById('successMsg');
@@ -114,9 +115,11 @@
         // 清空表单
         mcUsernameInput.value = '';
         emailInput.value = '';
+        qqInput.value = '';
         notesInput.value = '';
         successMsg.style.display = 'none';
         submitBtn.disabled = false;
+        submitBtn.style.display = 'inline-block';
         modal.style.display = 'flex';
       };
 
@@ -130,7 +133,7 @@
         const email = emailInput.value.trim();
         const qq = qqInput.value.trim();
         if (!username || !email || !qq) {
-          alert('请填写 Minecraft 用户名、联系邮箱以及QQ/电话');
+          alert('请填写正版用户名、联系邮箱以及QQ/电话');
           return;
         }
 
@@ -138,10 +141,11 @@
         submitBtn.textContent = '提交中...';
 
         const formData = new FormData();
-        formData.append('product', orderProductName.textContent);
-        formData.append('mc_username', username);
-        formData.append('email', email);
-        formData.append('notes', notesInput.value.trim());
+        formData.append('产品', orderProductName.textContent);
+        formData.append('Minecraft用户名', username);
+        formData.append('联系邮箱', email);
+        formData.append('QQ电话', qq);
+        formData.append('备注', notesInput.value.trim());
 
         try {
           const response = await fetch(FORM_URL, {
@@ -152,7 +156,6 @@
           if (response.ok) {
             successMsg.style.display = 'block';
             submitBtn.style.display = 'none';
-            // 3秒后自动关闭
             setTimeout(() => closeModal(), 3000);
           } else {
             alert('提交失败，请稍后重试或直接发送邮件至 3607483986@qq.com');
