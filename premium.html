@@ -39,7 +39,7 @@
 </head>
 <body>
   <header>
-    <a href="index.html" class="logo">
+    <a href="index" class="logo">
       <div class="logo-icon">💎</div>
       IceCloud & Plux · 商城
     </a>
@@ -58,9 +58,10 @@
     <div class="modal-content">
       <h3>📧 提交订单</h3>
       <p id="orderProductName" style="font-weight:600;"></p>
-      <input type="text" id="mcUsername" placeholder="我的世界用户名（必填）" required>
-      <input type="email" id="email" placeholder="联系邮箱（必填）" required>
-      <textarea id="notes" placeholder="备注 / 特殊需求（选填）" rows="3"></textarea>
+      <input type="text" id="正版名：" placeholder="正版用户名（必填）" required>
+      <input type="email" id="联系邮箱：" placeholder="联系邮箱（必填）" required>
+      <input type="qq" id="QQ/电话：" placeholder="QQ/电话（必填）" required>
+      <textarea id="备注" placeholder="备注 / 特殊需求（选填）" rows="3"></textarea>
       <div class="modal-buttons">
         <button onclick="closeModal()" style="background:#cbd5e0; color:#1e293b;">取消</button>
         <button id="submitOrderBtn" style="background:#ed8936; color:white;">提交订单</button>
@@ -71,12 +72,11 @@
 
   <footer>
     <p>© 2026 IceCloud & Plux Dev · 本网站与 Mojang 或 Microsoft 无关。</p>
-    <p><a href="index.html">返回主站</a></p>
+    <p><a href="index">返回主站</a></p>
   </footer>
 
   <script>
     (function() {
-      // ⚠️ 将这里的 YOUR_FORM_ID 替换为你在 Formspree 获得的 ID
       const FORM_ID = 'mrewroaw';  // 例如 'xrgvwwkp'
       const FORM_URL = `https://formspree.io/f/${FORM_ID}`;
 
@@ -128,8 +128,9 @@
       submitBtn.addEventListener('click', async () => {
         const username = mcUsernameInput.value.trim();
         const email = emailInput.value.trim();
-        if (!username || !email) {
-          alert('请填写 Minecraft 用户名和联系邮箱');
+        const qq = qqInput.value.trim();
+        if (!username || !email || !qq) {
+          alert('请填写 Minecraft 用户名、联系邮箱以及QQ/电话');
           return;
         }
 
