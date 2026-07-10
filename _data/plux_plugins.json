@@ -19,5 +19,12 @@
     "mc_version": "1.7.10 - 26.1",
     "date": "2026-07-07",
     "download_url": "https://raw.githubusercontent.com/IceCloudPlux/IceCloudPlux.github.io/refs/heads/main/plugins/Guild-3.0.2.jar"
+  },
+  {
+    "title": "PluxParty",
+    "version": "v1.0.0",
+    "mc_version": "",
+    "date": "2026-07-10",
+    "download_url": "https://raw.githubusercontent.com/IceCloudPlux/IceCloudPlux.github.io/main/plugins/PluxParty-1.0.0.jar"
   }
 ]
