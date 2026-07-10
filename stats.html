@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IceCloud & Plux · 运行统计</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e9eef3 100%);
+            color: #2d3748;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        .page-hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .page-hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2b6cb0, #4299e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        .page-hero .subtitle {
+            color: #5a6c7d;
+            font-size: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+            text-align: center;
+            transition: transform 0.2s;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.06);
+        }
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 0.3rem;
+        }
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .progress-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+            margin-top: 2rem;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .progress-section h3 {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #1a202c;
+        }
+        .progress-item {
+            margin-bottom: 1.2rem;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #edf2f7;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #63b3ed, #4299e1);
+            transition: width 0.6s ease;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #3182ce;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { text-decoration: underline; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-top: 1px solid #edf2f7;
+            color: #a0aec0;
+            font-size: 0.85rem;
+            margin-top: 3rem;
+        }
+        footer a {
+            color: #4a5568;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        footer a:hover { color: #3182ce; }
+
+        @media (max-width: 650px) {
+            .page-hero h1 { font-size: 1.8rem; }
+            .stat-value { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <a href="index" class="back-link">← 返回首页</a>
+
+        <section class="page-hero">
+            <h1>📊 网站运行统计</h1>
+            <p class="subtitle">实时追踪网站的运行状态、访问数据与项目进度</p>
+        </section>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="uptime-days">0</div>
+                <div class="stat-label">网站已运行（天）</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👁️</div>
+                <div class="stat-value" id="visitor-count">0</div>
+                <div class="stat-label">累计访问次数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-value" id="plugin-count">0</div>
+                <div class="stat-label">插件总数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🕒</div>
+                <div class="stat-value" id="last-update">-</div>
+                <div class="stat-label">最后更新</div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <h3>📈 项目开发进度</h3>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>IceCloud 系列</span>
+                    <span>80%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 80%;"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Plux 粒子特效</span>
+                    <span>60%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 60%; background: linear-gradient(90deg, #b794f4, #805ad5);"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>付费插件商城</span>
+                    <span>90%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 90%; background: linear-gradient(90deg, #f6ad55, #ed8936);"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>文档完善</span>
+                    <span>45%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 45%; background: linear-gradient(90deg, #68d391, #38a169);"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 IceCloud & Plux Dev · 本网站与 Mojang 或 Microsoft 无关。</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="index">返回首页</a> · 
+            <a href="https://github.com/IceCloudPlux/IceCloudPlux.github.io">GitHub</a>
+        </p>
+    </footer>
+
+    <script>
+        (function() {
+            const LAUNCH_DATE = new Date('2026-05-24');
+            const TOTAL_PLUGINS = 10;
+
+            function updateUptime() {
+                const now = new Date();
+                const diffTime = now - LAUNCH_DATE;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                document.getElementById('uptime-days').textContent = diffDays;
+            }
+
+            function updateVisitorCount() {
+                const storageKey = 'icecloud_visit_count';
+                const countKey = 'icecloud_visit_total';
+                const today = new Date().toDateString();
+                
+                let dailyData = JSON.parse(localStorage.getItem(storageKey)) || {};
+                
+                if (!dailyData[today]) {
+                    dailyData[today] = 1;
+                } else {
+                    dailyData[today] += 1;
+                }
+                
+                localStorage.setItem(storageKey, JSON.stringify(dailyData));
+                
+                let total = 0;
+                Object.values(dailyData).forEach(v => total += v);
+                localStorage.setItem(countKey, total);
+                
+                document.getElementById('visitor-count').textContent = total;
+            }
+
+            function updatePluginCount() {
+                document.getElementById('plugin-count').textContent = TOTAL_PLUGINS;
+            }
+
+            function updateLastModified() {
+                const lastModified = new Date(document.lastModified);
+                const formatted = lastModified.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+                document.getElementById('last-update').textContent = formatted;
+            }
+
+            updateUptime();
+            updateVisitorCount();
+            updatePluginCount();
+            updateLastModified();
+
+            setInterval(updateUptime, 60000);
+        })();
+    </script>
+</body>
+</html>
