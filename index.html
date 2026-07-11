@@ -449,7 +449,7 @@
                         <li>......以及更多！</li>
                     </ul>
                     <div>
-                        <a href="icecloud-download.html" class="btn btn-primary">下载 IceCloud</a>
+                        <a href="icecloud-download" class="btn btn-primary">下载 IceCloud</a>
                         <a href="#" class="btn btn-outline">文档</a>
                     </div>
                     <div class="version-badge">已停更</div>
@@ -469,7 +469,7 @@
                         <li>......以及更多！</li>
                     </ul>
                     <div>
-                        <a href="plux-download.html" class="btn btn-secondary">下载 Plux</a>
+                        <a href="plux-download" class="btn btn-secondary">下载 Plux</a>
                         <a href="#" class="btn btn-outline">文档</a>
                     </div>
                     <div class="version-badge">持续开发中</div>
@@ -489,10 +489,10 @@
                         <li>专属技术支持与优先更新</li>
                     </ul>
                     <div>
-                        <a href="premium.html" class="btn btn-premium">🛒 购买关闭</a>
+                        <a href="premium" class="btn btn-premium">🛒 购买</a>
                         <a href="#" class="btn btn-outline">查看详情</a>
                     </div>
-                    <div class="version-badge">终身许可 · 支持支付宝/微信/PayPal</div>
+                    <div class="version-badge">终身许可 · 支持支付宝/微信</div>
                 </div>
             </div>
 
@@ -521,7 +521,6 @@
 
     <script>
         (function() {
-            // 已更新为你的真实 Site Key
             const SITE_KEY = '0x4AAAAAADnifVGaRTV7QUMJ';
 
             const overlay = document.getElementById('verify-overlay');
@@ -537,10 +536,9 @@
             let isSuccess = false;
             let showClickableTimer = null;
 
-            // 验证状态持久化：有效期 2 小时
             const VERIFY_KEY = 'cf_verified';
             const EXPIRE_KEY = 'cf_verified_time';
-            const VALID_DURATION = 2 * 60 * 60 * 1000; // 2小时
+            const VALID_DURATION = 2 * 60 * 60 * 1000;
 
             function isAlreadyVerified() {
                 const flag = localStorage.getItem(VERIFY_KEY);
@@ -548,7 +546,6 @@
                 if (flag === 'true' && time && (Date.now() - time < VALID_DURATION)) {
                     return true;
                 }
-                // 清除过期数据
                 localStorage.removeItem(VERIFY_KEY);
                 localStorage.removeItem(EXPIRE_KEY);
                 return false;
@@ -628,7 +625,7 @@
                         callback: function(token) {
                             isSuccess = true;
                             isVerifying = false;
-                            markAsVerified();  // 持久化验证状态
+                            markAsVerified();  
                             showCircleSuccess();
                             textEl.textContent = '验证通过';
                             challengeArea.classList.remove('clickable');
