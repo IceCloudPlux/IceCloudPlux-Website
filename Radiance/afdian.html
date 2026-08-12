@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radiance · 辉光之境 · 服务协议</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f7f3ec 0%, #ede8df 100%);
+            color: #2d3748;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        .page-hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .page-hero .badge {
+            display: inline-block;
+            background: rgba(184, 134, 11, 0.10);
+            color: #b8860b;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            padding: 0.2rem 1.2rem;
+            border-radius: 100px;
+            border: 1px solid rgba(184, 134, 11, 0.15);
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+        }
+        .page-hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #b8860b, #d4a017, #f5c518);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.3rem;
+            letter-spacing: 1px;
+        }
+        .page-hero .subtitle {
+            color: #6b5e4e;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        .page-hero .version {
+            margin-top: 0.6rem;
+            font-size: 0.8rem;
+            color: #9a8b7a;
+            background: rgba(255,255,255,0.5);
+            display: inline-block;
+            padding: 0.15rem 1.5rem;
+            border-radius: 100px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* 卡片通用 */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 2.2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.04);
+            margin-bottom: 1.5rem;
+            transition: box-shadow 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+        }
+        .card h3 {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1a202c;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card p, .card li {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        /* 公平承诺横幅 */
+        .promise-banner {
+            background: linear-gradient(135deg, #fdf8f0, #faf3e6);
+            border: 1px solid rgba(184, 134, 11, 0.18);
+            border-radius: 16px;
+            padding: 1.2rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .promise-banner .icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+        .promise-banner .content {
+            flex: 1;
+        }
+        .promise-banner .content strong {
+            color: #b8860b;
+            font-size: 1rem;
+        }
+        .promise-banner .content p {
+            color: #5a4e3e;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        .promise-banner .tag {
+            background: rgba(184, 134, 11, 0.12);
+            color: #b8860b;
+            padding: 0.2rem 1.2rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            border: 1px solid rgba(184, 134, 11, 0.12);
+            letter-spacing: 0.5px;
+        }
+
+        /* 条款折叠 */
+        .term-item {
+            border: 1px solid rgba(0,0,0,0.04);
+            border-radius: 14px;
+            margin-bottom: 0.6rem;
+            overflow: hidden;
+            background: white;
+        }
+        .term-item .term-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.9rem 1.2rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+        .term-item .term-header:hover {
+            background: #faf8f5;
+        }
+        .term-item .term-header .title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1a202c;
+        }
+        .term-item .term-header .title .num {
+            color: #b8860b;
+            margin-right: 0.4rem;
+            font-weight: 700;
+        }
+        .term-item .term-header .arrow {
+            color: #a0aec0;
+            font-size: 0.8rem;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+        .term-item .term-header .arrow.open {
+            transform: rotate(180deg);
+        }
+        .term-item .term-body {
+            padding: 0 1.2rem 1.2rem;
+            color: #4a5568;
+            font-size: 0.9rem;
+            display: none;
+            line-height: 1.8;
+        }
+        .term-item .term-body.open {
+            display: block;
+        }
+        .term-item .term-body p {
+            margin-bottom: 0.6rem;
+        }
+        .term-item .term-body ul {
+            padding-left: 1.4rem;
+            margin-bottom: 0.6rem;
+        }
+        .term-item .term-body ul li {
+            margin-bottom: 0.2rem;
+        }
+        .term-item .term-body .highlight-box {
+            background: #fdf8f0;
+            border-left: 3px solid #b8860b;
+            padding: 0.6rem 1rem;
+            border-radius: 0 8px 8px 0;
+            margin: 0.6rem 0;
+            color: #3d3a32;
+            font-size: 0.9rem;
+        }
+        .term-item .term-body .highlight-box strong {
+            color: #b8860b;
+        }
+
+        /* 分类筛选按钮 */
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .filter-group button {
+            background: transparent;
+            border: 1px solid rgba(0,0,0,0.06);
+            color: #6b5e4e;
+            padding: 0.3rem 1.2rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .filter-group button:hover {
+            background: #f7f3ec;
+            border-color: rgba(184, 134, 11, 0.2);
+        }
+        .filter-group button.active {
+            background: rgba(184, 134, 11, 0.08);
+            border-color: rgba(184, 134, 11, 0.2);
+            color: #b8860b;
+        }
+
+        /* 底部 */
+        .footer-legal {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: #9a8b7a;
+        }
+
+        /* 响应式 */
+        @media (max-width: 650px) {
+            .container { padding: 1.5rem 1rem; }
+            .page-hero h1 { font-size: 1.8rem; }
+            .card { padding: 1.2rem 1.2rem; }
+            .promise-banner { flex-direction: column; align-items: flex-start; }
+            .promise-banner .tag { align-self: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 页面头部 -->
+    <section class="page-hero">
+        <div class="badge">✦ 公益 · 纯净 · 公平</div>
+        <h1>Radiance · 辉光之境</h1>
+        <p class="subtitle">— 用户服务协议 —</p>
+        <div class="version">版本 V1.0 &nbsp;·&nbsp; 生效 2026.08.12</div>
+    </section>
+
+    <!-- 公平承诺 -->
+    <div class="promise-banner">
+        <div class="icon">⚖️</div>
+        <div class="content">
+            <strong>公平竞技承诺</strong>
+            <p>本服 <strong>绝不包含</strong> 任何影响PVP公平性的付费内容 · 所有玩家战斗数值完全一致</p>
+        </div>
+        <span class="tag">绝不氪金变强</span>
+    </div>
+
+    <!-- 协议正文 -->
+    <div class="card">
+        <h3>📄 完整协议</h3>
+
+        <div class="filter-group">
+            <button class="active" data-target="all">全部展开</button>
+            <button data-target="core">核心条款</button>
+            <button data-target="legal">免责与法律</button>
+        </div>
+
+        <div id="terms-container">
+
+            <!-- 第一条 -->
+            <div class="term-item" data-tags="core">
+                <div class="term-header" onclick="toggleTerm(this)">
+                    <span class="title"><span class="num">第一条</span>总则</span>
+                    <span class="arrow open">▾</span>
+                </div>
+                <div class="term-body open">
+                    <p><strong>1.1</strong> 本协议是 Radiance · 辉光之境（简称"本服"）与您（简称"用户"）之间就使用本服服务所订立的有效契约。</p>
+                    <p><strong>1.2</strong> 本服为<strong>公益性质PVP服务器</strong>，所有玩家一律平等，不设影响战斗平衡的特权。</p>
+                    <p><strong>1.3</strong> 通过使用本服服务，即视为您已充分阅读、理解并同意本协议的全部内容。如您不同意本协议任何条款，请勿进入本服。</p>
+                    <p><strong>1.4</strong> 本服保留随时修改本协议的权利，修改后的协议将在QQ群及游戏内公告，继续使用本服服务即视为接受修改。</p>
+                </div>
+            </div>
+
+            <!-- 第二条 -->
+            <div class="term-item" data-tags="core">
+                <div class="term-header" onclick="toggleTerm(this)">
+                    <span class="title"><span class="num">第二条</span>服务性质</span>
+                    <span class="arrow open">▾</span>
+                </div>
+                <div class="term-body open">
+                    <p><strong>2.1</strong> 本服为<strong>公益性质</strong>，不以盈利为目的。服务器运营费用由管理团队自行承担或通过玩家自愿赞助解决。</p>
+                    <p><strong>2.2</strong> 赞助属于<strong>无偿赠与行为</strong>，赞助者可获得本服提供的装饰性回馈（如称号、特效等），<strong>不涉及任何影响游戏平衡的内容</strong>。</p>
+                    <p><strong>2.3</strong> 本服承诺所有玩家在PVP战斗中拥有完全一致的数值，<strong>不存在任何付费优势</strong>。</p>
+                </div>
+            </div>
+
+            <!-- 第三条 -->
+            <div class="term-item" data-tags="core">
+                <div class="term-header" onclick="toggleTerm(this)">
+                    <span class="title"><span class="num">第三条</span>玩家守则</span>
+                    <span class="arrow open">▾</span>
+                </div>
+                <div class="term-body open">
+                    <p>进入本服即视为同意遵守以下守则：</p>
+                    <ul>
+                        <li><strong>禁止作弊</strong>：严禁使用任何形式的作弊程序（包括但不限于杀戮光环、远距离攻击、防击退、自动连点、飞行、加速、透视等），违者<strong>永久封禁</strong>。</li>
+                        <li><strong>禁止利用漏洞</strong>：严禁利用游戏漏洞获取不正当优势，发现Bug请及时向管理报告。利用Bug者视情节封禁3天起。</li>
+                        <li><strong>禁止辱骂歧视</strong>：严禁辱骂、嘲讽、歧视其他玩家，尊重对手是PVP的基本素养。</li>
+                        <li><strong>禁止恶意卡服</strong>：严禁制造大量实体、高频红石等行为导致服务器卡顿。</li>
+                        <li><strong>禁止宣传外服</strong>：严禁在游戏内宣传其他服务器。</li>
+                        <li><strong>禁止恶意挂机</strong>：严禁恶意占用服务器资源。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 第四条 -->
+            <div class="term-item" data-tags="core">
+                <div class="term-header" onclick="toggleTerm(this)">
+                    <span class="title"><span class="num">第四条</span>处罚措施</span>
+                    <span class="arrow open">▾</span>
+                </div>
+                <div class="term-body open">
+                    <div class="highlight-box">
+                        <strong>⚖️ 处罚标准</strong><br>
+                        · 轻度违规（首次言语不当等）→ 口头警告<br>
+                        · 中度违规（多次辱骂、轻微利用Bug等）→ 封禁1-7天<br>
+                        · 重度违规（作弊、卡服、宣传外服等）→ <strong>永久封禁</strong>
+                    </div>
+                    <p><strong>4.1</strong> 封禁决定由管理团队根据服务器日志、录像回放等证据作出。</p>
+                    <p><strong>4.2</strong> 被封禁玩家如有异议，可在QQ群内联系管理并提供证据申诉。</p>
+                    <p><strong>4.3</strong> 管理团队保留最终解释权和裁定权。</p>
+                </div>
+            </div>
+
+            <!-- 第五条 -->
+            <div class="term-item" data-tags="legal">
+                <div class="term-header" onclick="toggleTerm(this)">
+                    <span class="title"><span class="num">第五条</span>免责声明</span>
+                    <span class="arrow open">▾</span>
+                </div>
+                <div class="term-body open">
+                    <p><strong>5.1 服务中断免责</strong><br>因DDoS攻击、服务商故障、自然灾害、政策法规等不可抗力导致的服务器中断、延迟、数据丢失等，管理方不承担责任。</p>
+                    <p><strong>5.2 玩家行为免责</strong><br>管理方不对玩家间的纠纷、玩家个人账号安全、第三方模组/插件导致的异常、玩家自身网络环境问题承担任何责任。</p>
+                    <p><strong>5.3 封禁免责</strong><br>管理方保留对违反规则的玩家进行封禁的权利。因违规被封禁的玩家，其已赞助金额（如有）不予退还。</p>
+                    <p><strong>5.4 使用风险自负</strong><br>使用本服服务的风险由您自行承担。本服服务按"现状"提供，不提供任何明示或暗示的担保。</p>
+                    <div class="highlight-box">
+                        <strong>⚠️ 重要提醒</strong><br>
+                        本服为公益项目，管理团队会尽力维护服务器稳定，但无法保证100%在线时间。请理解并接受这一现实。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第六条 -->
+            <div class="term-item" data-tags="legal">
+                <div class="term-header" onclick="toggleTerm(this)">
+                    <span class="title"><span class="num">第六条</span>未成年人条款</span>
+                    <span class="arrow open">▾</span>
+                </div>
+                <div class="term-body open">
+                    <p><strong>6.1</strong> 若您未满18周岁，建议在法定监护人知情的情况下使用本服服务。</p>
+                    <p><strong>6.2</strong> 本服不建议未成年人进行超出其经济能力的赞助行为。</p>
+                    <p><strong>6.3</strong> 请合理安排游戏时间，避免沉迷。</p>
+                </div>
+            </div>
+
+            <!-- 第七条 -->
+            <div class="term-item" data-tags="legal">
+                <div class="term-header" onclick="toggleTerm(this)">
+                    <span class="title"><span class="num">第七条</span>知识产权</span>
+                    <span class="arrow open">▾</span>
+                </div>
+                <div class="term-body open">
+                    <p><strong>7.1</strong> 本服所有原创内容（含插件、地图、材质、品牌标识等）的知识产权归管理团队所有。</p>
+                    <p><strong>7.2</strong> 未经管理团队书面授权，禁止使用 Radiance · 辉光之境 的品牌名称、Logo、标识等进行任何商业活动。</p>
+                </div>
+            </div>
+
+            <!-- 第八条 -->
+            <div class="term-item" data-tags="legal">
+                <div class="term-header" onclick="toggleTerm(this)">
+                    <span class="title"><span class="num">第八条</span>法律适用与争议解决</span>
+                    <span class="arrow open">▾</span>
+                </div>
+                <div class="term-body open">
+                    <p><strong>8.1</strong> 本协议的订立、执行和解释适用<strong>中华人民共和国法律</strong>。</p>
+                    <p><strong>8.2</strong> 因本协议引起的或与本协议有关的任何争议，双方应首先友好协商解决。</p>
+                    <p><strong>8.3</strong> 协商不成的，任何一方可向服务器运营方所在地有管辖权的人民法院提起诉讼。</p>
+                </div>
+            </div>
+
+            <!-- 第九条 -->
+            <div class="term-item" data-tags="core">
+                <div class="term-header" onclick="toggleTerm(this)">
+                    <span class="title"><span class="num">第九条</span>联系我们</span>
+                    <span class="arrow open">▾</span>
+                </div>
+                <div class="term-body open">
+                    <p>如有任何疑问、建议或举报，请在QQ群内联系管理团队。</p>
+                    <p style="margin-top:0.5rem; color:#6b5e4e;">
+                        <strong>服务器IP：</strong>（待填写）<br>
+                        <strong>QQ群：</strong>（待填写）
+                    </p>
+                </div>
+            </div>
+
+        </div><!-- /terms-container -->
+    </div>
+
+    <!-- 底部法律声明 -->
+    <div class="footer-legal">
+        Radiance · 辉光之境 &nbsp;·&nbsp; 公益PVP服务器 &nbsp;·&nbsp; 本协议最终解释权归管理团队所有
+    </div>
+
+</div>
+
+<script>
+    // ===== 折叠切换 =====
+    function toggleTerm(headerEl) {
+        const body = headerEl.nextElementSibling;
+        const arrow = headerEl.querySelector('.arrow');
+        if (body.classList.contains('open')) {
+            body.classList.remove('open');
+            arrow.classList.remove('open');
+        } else {
+            body.classList.add('open');
+            arrow.classList.add('open');
+        }
+    }
+
+    // ===== 分类筛选 =====
+    const filterBtns = document.querySelectorAll('.filter-group button');
+    const termItems = document.querySelectorAll('.term-item');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const target = this.dataset.target;
+
+            termItems.forEach(item => {
+                if (target === 'all') {
+                    item.style.display = 'block';
+                    const body = item.querySelector('.term-body');
+                    const arrow = item.querySelector('.arrow');
+                    if (body) { body.classList.add('open'); if (arrow) arrow.classList.add('open'); }
+                } else {
+                    const tags = item.dataset.tags ? item.dataset.tags.split(',') : [];
+                    if (tags.includes(target)) {
+                        item.style.display = 'block';
+                        const body = item.querySelector('.term-body');
+                        const arrow = item.querySelector('.arrow');
+                        if (body) { body.classList.add('open'); if (arrow) arrow.classList.add('open'); }
+                    } else {
+                        item.style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
+
+    // ===== 初始状态：全部展开 =====
+    document.querySelectorAll('.term-item').forEach(item => {
+        const body = item.querySelector('.term-body');
+        const arrow = item.querySelector('.arrow');
+        if (body && body.classList.contains('open')) {
+            if (arrow) arrow.classList.add('open');
+        }
+    });
+</script>
+
+</body>
+</html>
