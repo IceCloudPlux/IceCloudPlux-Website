@@ -52,8 +52,8 @@
             font-size: 1rem;
         }
 
-        /* 二维码区域 */
-        .qr-section {
+        /* 赞助链接区域 */
+        .sponsor-link-section {
             background: white;
             border-radius: 20px;
             padding: 2.5rem;
@@ -62,39 +62,36 @@
             margin-bottom: 2rem;
             border: 1px solid rgba(0,0,0,0.04);
         }
-        .qr-section h3 {
+        .sponsor-link-section h3 {
             font-weight: 700;
             color: #1a202c;
             margin-bottom: 1rem;
         }
-        .qr-section p {
+        .sponsor-link-section p {
             color: #718096;
             font-size: 0.9rem;
             margin-bottom: 1.5rem;
         }
-        .qr-placeholder {
-            width: 220px;
-            height: 220px;
-            background: #f7fafc;
-            border: 2px dashed #cbd5e0;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            color: #a0aec0;
-            font-size: 0.85rem;
+        .btn-afdian {
+            display: inline-block;
+            padding: 0.9rem 2.5rem;
+            background: #946ce6;  /* 爱发电主题色 */
+            color: white;
+            border-radius: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: background 0.2s, transform 0.2s;
+            box-shadow: 0 8px 18px rgba(148,108,230,0.3);
         }
-        .qr-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 12px;
+        .btn-afdian:hover {
+            background: #7c5cbf;
+            transform: translateY(-2px);
         }
-        .qr-note {
+        .sponsor-note {
             font-size: 0.8rem;
             color: #a0aec0;
-            margin-top: 0.5rem;
+            margin-top: 1rem;
         }
 
         /* 赞助者名单 */
@@ -162,15 +159,13 @@
             <p class="subtitle">您的每一份支持都是我们持续开发与维护的动力</p>
         </section>
 
-        <!-- 收款二维码 -->
-        <div class="qr-section">
-            <h3>📱 扫码赞助</h3>
-            <p>请使用微信扫描下方二维码，金额随意，感谢您的支持！</p>
-            <!-- 请将下方 src 替换为你的收款二维码图片地址 -->
-            <div class="qr-placeholder" id="qrContainer">
-                <img src="images/qr-code.png" alt="收款码">
-            </div>
-            <p class="qr-note">赞助时请备注您的 Minecraft 用户名，以便我们记录</p>
+        <!-- 爱发电赞助链接 -->
+        <div class="sponsor-link-section">
+            <h3>📱 爱发电赞助</h3>
+            <p>点击下方按钮前往爱发电页面，选择金额或自定义金额支付，感谢您的支持！</p>
+            <!-- ⚠️ 请将下面的链接替换为你自己的爱发电主页链接 -->
+            <a href="https://afdian.com/a/reationura" target="_blank" class="btn-afdian">💜 前往爱发电赞助</a>
+            <p class="sponsor-note">赞助时请备注您的 Minecraft 用户名，以便我们记录</p>
         </div>
 
         <!-- 赞助者名单 -->
@@ -192,12 +187,10 @@
 
     <script>
         (function() {
-            // ==================== 赞助者名单（请修改为真实数据） ====================
+            // 赞助者名单（请修改为真实数据）
             const sponsors = [
-                // 格式：'赞助者名字'
                 // '玩家A',
                 // '玩家B',
-                // '玩家C',
             ];
 
             const sponsorList = document.getElementById('sponsorList');
