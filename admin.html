@@ -1,342 +1,639 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>插件管理 · IceCloud & Plux</title>
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: #f5f7fa; margin: 0; padding: 20px; }
-    .container { max-width: 960px; margin: 0 auto; }
-    h1 { color: #1a202c; margin-bottom: 0.5rem; }
-    .login-box, .main-box { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.05); }
-    .login-box { max-width: 400px; margin: 100px auto; text-align: center; }
-    .login-box input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; }
-    .login-box button { width: 100%; padding: 10px; background: #3182ce; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; }
-    .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-    .tab { padding: 8px 20px; border: 1px solid #ccc; border-radius: 20px; cursor: pointer; background: white; }
-    .tab.active { background: #3182ce; color: white; border-color: #3182ce; }
-    table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
-    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #edf2f7; }
-    th { background: #f8fafc; color: #475569; font-weight: 600; font-size: 0.9rem; }
-    .actions button { margin: 0 3px; padding: 4px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-    .btn-add { background: #2b6cb0; color: white; padding: 8px 18px; border: none; border-radius: 8px; margin-bottom: 15px; cursor: pointer; }
-    .btn-edit { background: #38a169; color: white; }
-    .btn-delete { background: #e53e3e; color: white; }
-    .btn-logout { float: right; background: #a0aec0; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; }
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-    .modal-content { background: white; padding: 24px; border-radius: 12px; width: 450px; max-width: 90%; }
-    .modal-content input { width: 100%; padding: 8px; margin: 6px 0; border: 1px solid #ccc; border-radius: 6px; }
-    .modal-buttons { text-align: right; margin-top: 15px; }
-    .modal-buttons button { margin-left: 10px; padding: 8px 18px; border: none; border-radius: 6px; cursor: pointer; }
-    .save-btn { background: #2b6cb0; color: white; }
-    .cancel-btn { background: #cbd5e0; }
-    .error { color: #e53e3e; font-size: 0.9rem; margin-top: 10px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IceCloud & Plux · 后台管理</title>
+    <style>
+        :root {
+            --bg-primary: #0b0d15;
+            --bg-secondary: #131620;
+            --bg-card: rgba(255,255,255,0.04);
+            --bg-nav: rgba(11,13,21,0.0);
+            --text-primary: #e8eaf0;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border-color: rgba(255,255,255,0.06);
+            --accent: #7c3aed;
+            --accent-light: #a78bfa;
+            --accent-gradient: linear-gradient(135deg, #7c3aed, #a855f7);
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+            --nav-blur: 12px;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(0,0,0,0.03);
+            --bg-nav: rgba(248,250,252,0.0);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: rgba(0,0,0,0.06);
+            --accent: #7c3aed;
+            --accent-light: #8b5cf6;
+            --shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+        a { color:inherit; text-decoration:none; }
+        .container { max-width:1200px; margin:0 auto; padding:0 24px; }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed; top:0; left:0; right:0; z-index:1000;
+            padding:16px 0;
+            transition: background 0.3s, box-shadow 0.3s, border-color 0.3s;
+            background: var(--bg-nav);
+            border-bottom: 1px solid transparent;
+        }
+        .navbar.scrolled {
+            background: var(--bg-secondary);
+            border-bottom-color: var(--border-color);
+            box-shadow:0 2px 20px rgba(0,0,0,0.1);
+        }
+        [data-theme="light"] .navbar.scrolled { background: rgba(255,255,255,0.85); backdrop-filter: blur(var(--nav-blur)); }
+        [data-theme="dark"] .navbar.scrolled { background: rgba(11,13,21,0.85); backdrop-filter: blur(var(--nav-blur)); }
+        .navbar .container { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+        .brand { font-size:1.3rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:8px; }
+        .brand .highlight { color:var(--accent-light); }
+        .nav-links { display:flex; align-items:center; gap:20px; font-size:0.95rem; flex-wrap:wrap; }
+        .nav-links a { color:var(--text-secondary); transition:color 0.2s; font-weight:500; }
+        .nav-links a:hover { color:var(--text-primary); }
+        .nav-divider { width:1px; height:24px; background:var(--border-color); }
+        .theme-toggle { display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; font-size:0.9rem; color:var(--text-secondary); }
+        .theme-toggle .toggle-track { width:40px; height:22px; border-radius:30px; background:var(--border-color); position:relative; transition:background 0.3s; flex-shrink:0; }
+        .theme-toggle .toggle-thumb { width:18px; height:18px; border-radius:50%; background:white; position:absolute; top:2px; left:2px; transition:transform 0.3s, background 0.3s; box-shadow:0 2px 4px rgba(0,0,0,0.2); }
+        [data-theme="dark"] .theme-toggle .toggle-track { background:var(--accent); }
+        [data-theme="dark"] .theme-toggle .toggle-thumb { transform:translateX(18px); background:#fff; }
+
+        /* 登录框 */
+        .login-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 80px;
+        }
+        .login-box {
+            background: var(--bg-card);
+            border:1px solid var(--border-color);
+            border-radius:20px;
+            padding: 40px 32px;
+            max-width:400px;
+            width:100%;
+            text-align:center;
+        }
+        .login-box h2 { font-size:1.5rem; font-weight:700; margin-bottom: 8px; }
+        .login-box p { color:var(--text-secondary); font-size:0.9rem; margin-bottom: 24px; }
+        .login-box input {
+            width:100%;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border:1px solid var(--border-color);
+            border-radius:10px;
+            color: var(--text-primary);
+            font-size:1rem;
+            margin-bottom:16px;
+            outline:none;
+        }
+        .login-box input:focus { border-color: var(--accent); }
+        .btn-login {
+            padding: 12px 24px;
+            border-radius: 40px;
+            background: var(--accent-gradient);
+            color:#fff;
+            font-weight:700;
+            border:none;
+            cursor:pointer;
+            width:100%;
+            transition: all 0.2s;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow:0 4px 20px rgba(124,58,237,0.4); }
+        .error-msg { color:#ef4444; font-size:0.85rem; margin-top:8px; }
+
+        /* 主管理界面 */
+        .admin-section {
+            padding:120px 0 40px;
+            display:none;
+        }
+        .admin-header {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:12px;
+            margin-bottom:24px;
+        }
+        .admin-header h1 { font-size:2rem; font-weight:800; }
+        .btn-logout {
+            padding: 8px 20px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border:1px solid var(--border-color);
+            color:var(--text-secondary);
+            cursor:pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { border-color:var(--accent); color:var(--text-primary); }
+
+        .tabs {
+            display:flex;
+            gap:12px;
+            margin-bottom:24px;
+            flex-wrap:wrap;
+        }
+        .tab {
+            padding: 8px 20px;
+            border-radius: 30px;
+            background: var(--bg-card);
+            border:1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor:pointer;
+            font-weight:600;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            background: var(--accent-gradient);
+            color:#fff;
+            border-color:transparent;
+        }
+
+        .btn-add {
+            padding: 8px 20px;
+            border-radius: 30px;
+            background: var(--accent-gradient);
+            color:#fff;
+            border:none;
+            cursor:pointer;
+            font-weight:600;
+            margin-bottom:16px;
+            transition: all 0.2s;
+        }
+        .btn-add:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(124,58,237,0.4); }
+
+        .table-container {
+            background: var(--bg-card);
+            border-radius:16px;
+            padding:24px;
+            border:1px solid var(--border-color);
+            overflow-x:auto;
+        }
+        table { width:100%; border-collapse:collapse; }
+        th, td { padding:12px 16px; text-align:left; border-bottom:1px solid var(--border-color); }
+        th { color:var(--text-secondary); font-weight:600; font-size:0.9rem; }
+        td { color:var(--text-primary); font-size:0.95rem; }
+        .actions { display:flex; gap:8px; }
+        .btn-edit, .btn-delete {
+            padding: 4px 12px;
+            border-radius: 20px;
+            border:none;
+            cursor:pointer;
+            font-weight:600;
+            font-size:0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-edit { background:#38a169; color:#fff; }
+        .btn-delete { background:#e53e3e; color:#fff; }
+
+        /* 模态框 */
+        .modal {
+            display:none;
+            position:fixed;
+            top:0; left:0;
+            width:100%; height:100%;
+            background:rgba(0,0,0,0.6);
+            justify-content:center;
+            align-items:center;
+            z-index:2000;
+        }
+        .modal.active { display:flex; }
+        .modal-content {
+            background: var(--bg-secondary);
+            border:1px solid var(--border-color);
+            border-radius:16px;
+            padding:32px 24px;
+            max-width:500px;
+            width:90%;
+        }
+        .modal-content h3 { margin-bottom:16px; }
+        .modal-content input {
+            width:100%;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border:1px solid var(--border-color);
+            border-radius:8px;
+            color: var(--text-primary);
+            font-size:0.95rem;
+            margin-bottom:12px;
+            outline:none;
+        }
+        .modal-content input:focus { border-color: var(--accent); }
+        .modal-buttons { display:flex; gap:12px; justify-content:flex-end; margin-top:16px; }
+        .modal-buttons button {
+            padding: 8px 20px;
+            border-radius: 20px;
+            border:none;
+            cursor:pointer;
+            font-weight:600;
+        }
+        .btn-cancel { background: var(--bg-card); color:var(--text-secondary); }
+        .btn-save { background: var(--accent-gradient); color:#fff; }
+
+        .footer {
+            padding:32px 0;
+            border-top:1px solid var(--border-color);
+            text-align:center;
+            color:var(--text-muted);
+            font-size:0.9rem;
+            margin-top:48px;
+        }
+
+        @media (max-width:768px) {
+            .navbar .container { flex-direction:column; align-items:stretch; }
+            .nav-links { justify-content:center; }
+            .admin-section { padding-top:100px; }
+        }
+    </style>
 </head>
 <body>
-  <div id="login-section" class="login-box">
-    <h2>🔐 管理员登录</h2>
-    <input type="text" id="usernameInput" placeholder="用户名">
-    <input type="password" id="tokenInput" placeholder="Token">
-    <button onclick="login()">验证并进入后台</button>
-    <div class="error" id="loginError"></div>
-    <p style="margin-top: 15px; font-size: 0.8rem; color: #94a3b8;">
-      没有 Token？<a href="https://github.com/settings/tokens" target="_blank">点击这里创建</a>（勾选 <strong>repo</strong> 权限）
-    </p>
-  </div>
 
-  <div id="main-section" class="container" style="display: none;">
-    <button class="btn-logout" onclick="logout()">退出登录</button>
-    <h1>⚙️ 插件管理</h1>
-    <div class="tabs">
-      <div class="tab active" data-file="icecloud_plugins">❄️ IceCloud</div>
-      <div class="tab" data-file="plux_plugins">✨ Plux</div>
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="/" class="brand"><span class="highlight">IceCloud</span>&nbsp;&amp;&nbsp;Plux</a>
+            <div class="nav-links">
+                <a href="/">首页</a>
+                <a href="/#plugins">插件</a>
+                <a href="community">社区</a>
+                <a href="sponsor">赞助</a>
+                <a href="stats">运行统计</a>
+                <span class="nav-divider"></span>
+                <div class="theme-toggle" id="themeToggle" role="button" tabindex="0" aria-label="切换主题">
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 登录界面 -->
+    <section class="login-section" id="loginSection">
+        <div class="login-box">
+            <h2>🔐 管理员登录</h2>
+            <p>请输入您的 GitHub Personal Access Token（需 repo 权限）</p>
+            <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx">
+            <button class="btn-login" onclick="login()">登录后台</button>
+            <div class="error-msg" id="loginError"></div>
+        </div>
+    </section>
+
+    <!-- 管理界面 -->
+    <section class="admin-section" id="adminSection">
+        <div class="container">
+            <div class="admin-header">
+                <h1>⚙️ 插件管理</h1>
+                <button class="btn-logout" onclick="logout()">退出登录</button>
+            </div>
+
+            <div class="tabs" id="tabsContainer">
+                <button class="tab active" data-file="icecloud_plugins">❄️ IceCloud</button>
+                <button class="tab" data-file="plux_plugins">✨ Plux</button>
+                <button class="tab" data-file="special_plugins">🔧 特殊插件</button>
+            </div>
+
+            <button class="btn-add" onclick="openAddModal()">+ 添加插件</button>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>插件名称</th>
+                            <th>版本</th>
+                            <th>支持 MC</th>
+                            <th>发布日期</th>
+                            <th>下载链接</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pluginTableBody">
+                        <!-- 动态渲染 -->
+                    </tbody>
+                </table>
+                <div id="statusMsg" style="text-align:center; padding:20px; color:var(--text-muted);">加载中…</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 添加/编辑模态框 -->
+    <div class="modal" id="pluginModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">添加插件</h3>
+            <input type="hidden" id="pluginIndex" value="">
+            <input type="text" id="pluginTitle" placeholder="插件名称">
+            <input type="text" id="pluginVersion" placeholder="版本号">
+            <input type="text" id="pluginMC" placeholder="支持 MC 版本">
+            <input type="text" id="pluginDate" placeholder="发布日期 (YYYY-MM-DD)">
+            <input type="text" id="pluginURL" placeholder="下载链接 (.jar)">
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn-save" id="saveBtn">保存</button>
+            </div>
+        </div>
     </div>
-    <button class="btn-add" onclick="openAddModal()">+ 添加插件</button>
-    <table>
-      <thead>
-        <tr>
-          <th>插件名称</th>
-          <th>版本</th>
-          <th>支持 MC</th>
-          <th>发布日期</th>
-          <th>下载链接</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody id="plugin-list"></tbody>
-    </table>
-  </div>
 
-  <div id="pluginModal" class="modal">
-    <div class="modal-content">
-      <h3 id="modalTitle">添加插件</h3>
-      <input type="hidden" id="pluginIndex" value="">
-      <label>插件名称</label>
-      <input type="text" id="pluginTitle" placeholder="例如：IceCloudBan">
-      <label>版本号</label>
-      <input type="text" id="pluginVersion" placeholder="v1.0.0">
-      <label>支持的 MC 版本</label>
-      <input type="text" id="pluginMC" placeholder="1.20 - 1.21">
-      <label>发布日期</label>
-      <input type="text" id="pluginDate" placeholder="2026-06-05">
-      <label>下载直链</label>
-      <input type="text" id="pluginURL" placeholder="https://raw.githubusercontent.com/...">
-      <div class="modal-buttons">
-        <button class="cancel-btn" onclick="closeModal()">取消</button>
-        <button class="save-btn" id="saveBtn">保存</button>
-      </div>
-    </div>
-  </div>
+    <footer class="footer">
+        <p>Made with <span style="color:#ef4444;">❤️</span> by IceCloud & Plux Dev</p>
+    </footer>
 
-  <script>
-    const REPO_OWNER = 'IceCloudPlux';
-    const REPO_NAME = 'IceCloudPlux.github.io';
-    const BRANCH = 'main';
-    const DATA_PATH = '_data';
+    <script>
+        (function() {
+            // ---------- 主题切换 ----------
+            const themeToggle = document.getElementById('themeToggle');
+            const html = document.documentElement;
+            html.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
+            themeToggle.addEventListener('click', () => {
+                const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+            });
+            themeToggle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); themeToggle.click(); }
+            });
 
-    const VALID_USERNAME = 'ya_xzer21145';
+            // ---------- 导航栏滚动 ----------
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('scrolled', window.pageYOffset > 20);
+            });
 
-    let currentFile = 'icecloud_plugins';
-    let pluginsData = [];
-    let token = localStorage.getItem('gh_token') || '';
+            // ---------- 配置 ----------
+            const REPO_OWNER = 'IceCloudPlux';
+            const REPO_NAME = 'IceCloudPlux.github.io';
+            const BRANCH = 'main';
+            const DATA_PATH = '_data';
 
-    function b64EncodeUnicode(str) {
-      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-        return String.fromCharCode('0x' + p1);
-      }));
-    }
+            let currentFile = 'icecloud_plugins';
+            let pluginsData = [];
+            let token = localStorage.getItem('gh_token') || '';
 
-    function escapeHtml(text) {
-      return String(text)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
+            // ---------- UI 元素 ----------
+            const loginSection = document.getElementById('loginSection');
+            const adminSection = document.getElementById('adminSection');
+            const loginError = document.getElementById('loginError');
+            const tokenInput = document.getElementById('tokenInput');
+            const tbody = document.getElementById('pluginTableBody');
+            const statusMsg = document.getElementById('statusMsg');
+            const modal = document.getElementById('pluginModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const pluginIndex = document.getElementById('pluginIndex');
+            const pluginTitle = document.getElementById('pluginTitle');
+            const pluginVersion = document.getElementById('pluginVersion');
+            const pluginMC = document.getElementById('pluginMC');
+            const pluginDate = document.getElementById('pluginDate');
+            const pluginURL = document.getElementById('pluginURL');
+            const saveBtn = document.getElementById('saveBtn');
 
-    function login() {
-      const username = document.getElementById('usernameInput').value.trim();
-      const inputToken = document.getElementById('tokenInput').value.trim();
+            // ---------- 登录逻辑 ----------
+            window.login = async function() {
+                const inputToken = tokenInput.value.trim();
+                if (!inputToken) {
+                    loginError.textContent = '请输入 Token';
+                    return;
+                }
+                token = inputToken;
+                try {
+                    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`, {
+                        headers: { Authorization: `token ${token}` }
+                    });
+                    if (!res.ok) throw new Error('Token 无效或没有仓库权限');
+                    localStorage.setItem('gh_token', token);
+                    loginSection.style.display = 'none';
+                    adminSection.style.display = 'block';
+                    loadPlugins();
+                } catch (err) {
+                    loginError.textContent = err.message;
+                }
+            };
 
-      if (username !== VALID_USERNAME) {
-        showLoginError('用户名错误');
-        return;
-      }
+            window.logout = function() {
+                if (confirm('确定退出登录吗？')) {
+                    localStorage.removeItem('gh_token');
+                    token = '';
+                    loginSection.style.display = 'flex';
+                    adminSection.style.display = 'none';
+                    tokenInput.value = '';
+                }
+            };
 
-      if (!inputToken) {
-        showLoginError('请输入 Token');
-        return;
-      }
+            // ---------- 标签切换 ----------
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentFile = e.target.dataset.file;
+                    loadPlugins();
+                });
+            });
 
-      token = inputToken;
-      fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`, {
-        headers: { Authorization: `token ${token}` }
-      })
-      .then(res => {
-        if (!res.ok) throw new Error('Token 无效或没有仓库权限');
-        localStorage.setItem('gh_token', token);
-        document.getElementById('login-section').style.display = 'none';
-        document.getElementById('main-section').style.display = 'block';
-        loadPlugins();
-      })
-      .catch(err => showLoginError(err.message));
-    }
+            // ---------- 加载数据 ----------
+            async function loadPlugins() {
+                const filePath = `${DATA_PATH}/${currentFile}.json`;
+                try {
+                    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${BRANCH}`, {
+                        headers: { Authorization: `token ${token}` }
+                    });
+                    if (res.status === 404) {
+                        pluginsData = [];
+                        renderTable();
+                        return;
+                    }
+                    if (!res.ok) {
+                        const errData = await res.json();
+                        throw new Error(errData.message || '加载失败');
+                    }
+                    const data = await res.json();
+                    const content = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+                    pluginsData = JSON.parse(content);
+                    if (!Array.isArray(pluginsData)) throw new Error('JSON 格式错误');
+                    renderTable();
+                } catch (err) {
+                    alert('加载插件数据失败: ' + err.message);
+                    pluginsData = [];
+                    renderTable();
+                }
+            }
 
-    function showLoginError(msg) {
-      document.getElementById('loginError').textContent = msg;
-    }
+            function renderTable() {
+                tbody.innerHTML = '';
+                if (pluginsData.length === 0) {
+                    statusMsg.style.display = 'block';
+                    statusMsg.textContent = '暂无插件数据，请添加。';
+                    return;
+                }
+                statusMsg.style.display = 'none';
+                pluginsData.forEach((plugin, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${escapeHtml(plugin.title)}</td>
+                        <td>${escapeHtml(plugin.version)}</td>
+                        <td>${escapeHtml(plugin.mc_version)}</td>
+                        <td>${escapeHtml(plugin.date)}</td>
+                        <td><a href="${escapeHtml(plugin.download_url)}" target="_blank">链接</a></td>
+                        <td class="actions">
+                            <button class="btn-edit" data-index="${index}">编辑</button>
+                            <button class="btn-delete" data-index="${index}">删除</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
 
-    function logout() {
-      if (confirm('确定退出登录吗？')) {
-        localStorage.removeItem('gh_token');
-        token = '';
-        location.reload();
-      }
-    }
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', () => openEditModal(btn.dataset.index));
+                });
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', () => deletePlugin(btn.dataset.index));
+                });
+            }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      if (token) {
-        document.getElementById('login-section').style.display = 'none';
-        document.getElementById('main-section').style.display = 'block';
-        loadPlugins();
-      }
-    });
+            // ---------- 打开添加模态框 ----------
+            window.openAddModal = function() {
+                modalTitle.textContent = '添加插件';
+                pluginIndex.value = '';
+                pluginTitle.value = '';
+                pluginVersion.value = '';
+                pluginMC.value = '';
+                pluginDate.value = '';
+                pluginURL.value = '';
+                modal.classList.add('active');
+            };
 
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', (e) => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        currentFile = e.target.dataset.file;
-        loadPlugins();
-      });
-    });
+            // ---------- 打开编辑模态框 ----------
+            function openEditModal(index) {
+                const plugin = pluginsData[index];
+                modalTitle.textContent = '编辑插件';
+                pluginIndex.value = index;
+                pluginTitle.value = plugin.title;
+                pluginVersion.value = plugin.version;
+                pluginMC.value = plugin.mc_version;
+                pluginDate.value = plugin.date;
+                pluginURL.value = plugin.download_url;
+                modal.classList.add('active');
+            }
 
-    async function loadPlugins() {
-      const filePath = `${DATA_PATH}/${currentFile}.json`;
-      try {
-        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${BRANCH}`, {
-          headers: { Authorization: `token ${token}` }
-        });
-        if (res.status === 404) {
-          pluginsData = [];
-          renderTable();
-          return;
-        }
-        if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.message || '加载失败');
-        }
-        const data = await res.json();
-        const content = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
-        pluginsData = JSON.parse(content);
-        if (!Array.isArray(pluginsData)) throw new Error('JSON 格式错误');
-        renderTable();
-      } catch (err) {
-        alert('加载插件数据失败: ' + err.message);
-        pluginsData = [];
-        renderTable();
-      }
-    }
+            window.closeModal = function() {
+                modal.classList.remove('active');
+            };
 
-    function renderTable() {
-      const tbody = document.getElementById('plugin-list');
-      tbody.innerHTML = '';
-      pluginsData.forEach((plugin, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${escapeHtml(plugin.title)}</td>
-          <td>${escapeHtml(plugin.version)}</td>
-          <td>${escapeHtml(plugin.mc_version)}</td>
-          <td>${escapeHtml(plugin.date)}</td>
-          <td><a href="${escapeHtml(plugin.download_url)}" target="_blank" title="${escapeHtml(plugin.download_url)}">🔗</a></td>
-          <td class="actions">
-            <button class="btn-edit" data-index="${index}">编辑</button>
-            <button class="btn-delete" data-index="${index}">删除</button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
+            // ---------- 保存插件 ----------
+            saveBtn.addEventListener('click', async () => {
+                const index = pluginIndex.value;
+                const newPlugin = {
+                    title: pluginTitle.value.trim(),
+                    version: pluginVersion.value.trim(),
+                    mc_version: pluginMC.value.trim(),
+                    date: pluginDate.value.trim(),
+                    download_url: pluginURL.value.trim()
+                };
 
-      document.querySelectorAll('.btn-edit').forEach(btn => {
-        btn.addEventListener('click', () => openEditModal(btn.dataset.index));
-      });
-      document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', () => deletePlugin(btn.dataset.index));
-      });
-    }
+                if (!newPlugin.title || !newPlugin.version || !newPlugin.download_url) {
+                    alert('请至少填写名称、版本和下载链接');
+                    return;
+                }
 
-    function openAddModal() {
-      document.getElementById('modalTitle').textContent = '添加插件';
-      document.getElementById('pluginIndex').value = '';
-      clearModalFields();
-      document.getElementById('pluginModal').style.display = 'flex';
-    }
+                if (index === '') {
+                    pluginsData.push(newPlugin);
+                } else {
+                    pluginsData[index] = newPlugin;
+                }
 
-    function openEditModal(index) {
-      const plugin = pluginsData[index];
-      document.getElementById('modalTitle').textContent = '编辑插件';
-      document.getElementById('pluginIndex').value = index;
-      document.getElementById('pluginTitle').value = plugin.title;
-      document.getElementById('pluginVersion').value = plugin.version;
-      document.getElementById('pluginMC').value = plugin.mc_version;
-      document.getElementById('pluginDate').value = plugin.date;
-      document.getElementById('pluginURL').value = plugin.download_url;
-      document.getElementById('pluginModal').style.display = 'flex';
-    }
+                await saveToGitHub();
+                closeModal();
+            });
 
-    function clearModalFields() {
-      ['pluginTitle','pluginVersion','pluginMC','pluginDate','pluginURL'].forEach(id => {
-        document.getElementById(id).value = '';
-      });
-    }
+            // ---------- 删除插件 ----------
+            async function deletePlugin(index) {
+                if (!confirm('确定删除该插件吗？')) return;
+                pluginsData.splice(index, 1);
+                await saveToGitHub();
+            }
 
-    function closeModal() {
-      document.getElementById('pluginModal').style.display = 'none';
-    }
+            // ---------- 保存到 GitHub ----------
+            async function saveToGitHub() {
+                const filePath = `${DATA_PATH}/${currentFile}.json`;
+                const newContent = JSON.stringify(pluginsData, null, 2);
+                try {
+                    let sha = null;
+                    const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${BRANCH}`, {
+                        headers: { Authorization: `token ${token}` }
+                    });
 
-    document.getElementById('saveBtn').addEventListener('click', async () => {
-      const index = document.getElementById('pluginIndex').value;
-      const newPlugin = {
-        title: document.getElementById('pluginTitle').value.trim(),
-        version: document.getElementById('pluginVersion').value.trim(),
-        mc_version: document.getElementById('pluginMC').value.trim(),
-        date: document.getElementById('pluginDate').value.trim(),
-        download_url: document.getElementById('pluginURL').value.trim()
-      };
+                    if (getRes.status === 200) {
+                        const fileData = await getRes.json();
+                        sha = fileData.sha;
+                    } else if (getRes.status === 404) {
+                        console.log('文件不存在，将新建');
+                    } else {
+                        const errData = await getRes.json();
+                        throw new Error('获取文件信息失败: ' + (errData.message || getRes.status));
+                    }
 
-      if (!newPlugin.title || !newPlugin.version || !newPlugin.download_url) {
-        alert('请至少填写名称、版本和下载链接');
-        return;
-      }
+                    const body = {
+                        message: `更新 ${currentFile} 列表`,
+                        content: btoa(unescape(encodeURIComponent(newContent))),
+                        branch: BRANCH
+                    };
+                    if (sha) body.sha = sha;
 
-      if (index === '') {
-        pluginsData.push(newPlugin);
-      } else {
-        pluginsData[index] = newPlugin;
-      }
+                    const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`, {
+                        method: 'PUT',
+                        headers: {
+                            Authorization: `token ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    });
 
-      await saveToGitHub();
-      closeModal();
-    });
+                    if (!putRes.ok) {
+                        const errData = await putRes.json();
+                        console.error('PUT 错误:', errData);
+                        throw new Error(errData.message || '保存失败');
+                    }
 
-    async function deletePlugin(index) {
-      if (!confirm('确定删除该插件吗？')) return;
-      pluginsData.splice(index, 1);
-      await saveToGitHub();
-    }
+                    console.log('保存成功');
+                    alert('✅ 保存成功！网站将在几十秒内更新。');
+                    renderTable();
+                } catch (err) {
+                    console.error('保存异常:', err);
+                    alert('保存失败: ' + err.message);
+                }
+            }
 
-    async function saveToGitHub() {
-      const filePath = `${DATA_PATH}/${currentFile}.json`;
-      const newContent = JSON.stringify(pluginsData, null, 2);
-      try {
-        let sha = null;
-        const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${BRANCH}`, {
-          headers: { Authorization: `token ${token}` }
-        });
-        
-        if (getRes.status === 200) {
-          const fileData = await getRes.json();
-          sha = fileData.sha;
-        } else if (getRes.status === 404) {
-          console.log('文件不存在，将新建');
-        } else {
-          const errData = await getRes.json();
-          throw new Error('获取文件信息失败: ' + (errData.message || getRes.status));
-        }
+            function escapeHtml(text) {
+                if (!text) return '';
+                return String(text)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
 
-        const body = {
-          message: `更新 ${currentFile} 列表`,
-          content: b64EncodeUnicode(newContent),
-          branch: BRANCH
-        };
-        if (sha) body.sha = sha;
-
-        const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`, {
-          method: 'PUT',
-          headers: {
-            Authorization: `token ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
-        });
-
-        if (!putRes.ok) {
-          const errData = await putRes.json();
-          console.error('PUT 错误:', errData);
-          throw new Error(errData.message || '保存失败');
-        }
-
-        console.log('保存成功');
-        alert('✅ 保存成功！网站将在几十秒内更新。');
-        renderTable();
-      } catch (err) {
-        console.error('保存异常:', err);
-        alert('保存失败: ' + err.message);
-      }
-    }
-  </script>
+            // ---------- 初始化 ----------
+            if (token) {
+                loginSection.style.display = 'none';
+                adminSection.style.display = 'block';
+                loadPlugins();
+            } else {
+                loginSection.style.display = 'flex';
+                adminSection.style.display = 'none';
+            }
+        })();
+    </script>
 </body>
 </html>
