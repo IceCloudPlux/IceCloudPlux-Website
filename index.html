@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IceCloud & Plux · 官网</title>
     <style>
-        /* ========== CSS Variables (主题) ========== */
         :root {
             --bg-primary: #0b0d15;
             --bg-secondary: #131620;
@@ -47,10 +46,8 @@
         }
 
         a { color: inherit; text-decoration: none; }
-
         .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-        /* 导航栏 */
         .navbar {
             position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
             padding: 16px 0;
@@ -63,144 +60,63 @@
             border-bottom-color: var(--border-color);
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
         }
-        [data-theme="light"] .navbar.scrolled {
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(var(--nav-blur));
-        }
-        [data-theme="dark"] .navbar.scrolled {
-            background: rgba(11,13,21,0.85);
-            backdrop-filter: blur(var(--nav-blur));
-        }
-        .navbar .container {
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-        }
-        .brand {
-            font-size: 1.3rem; font-weight: 700; color: var(--text-primary);
-            display: flex; align-items: center; gap: 8px;
-        }
+        [data-theme="light"] .navbar.scrolled { background: rgba(255,255,255,0.85); backdrop-filter: blur(var(--nav-blur)); }
+        [data-theme="dark"] .navbar.scrolled { background: rgba(11,13,21,0.85); backdrop-filter: blur(var(--nav-blur)); }
+        .navbar .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .brand { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
         .brand .highlight { color: var(--accent-light); }
-        .nav-links {
-            display: flex; align-items: center; gap: 20px; font-size: 0.95rem; flex-wrap: wrap;
-        }
+        .nav-links { display: flex; align-items: center; gap: 20px; font-size: 0.95rem; flex-wrap: wrap; }
         .nav-links a { color: var(--text-secondary); transition: color 0.2s; font-weight: 500; }
         .nav-links a:hover { color: var(--text-primary); }
         .nav-divider { width: 1px; height: 24px; background: var(--border-color); }
-
-        .theme-toggle {
-            display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;
-            font-size: 0.9rem; color: var(--text-secondary);
-        }
-        .theme-toggle .toggle-track {
-            width: 40px; height: 22px; border-radius: 30px;
-            background: var(--border-color); position: relative; transition: background 0.3s; flex-shrink: 0;
-        }
-        .theme-toggle .toggle-thumb {
-            width: 18px; height: 18px; border-radius: 50%; background: white;
-            position: absolute; top: 2px; left: 2px;
-            transition: transform 0.3s, background 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
+        .theme-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; font-size: 0.9rem; color: var(--text-secondary); }
+        .theme-toggle .toggle-track { width: 40px; height: 22px; border-radius: 30px; background: var(--border-color); position: relative; transition: background 0.3s; flex-shrink: 0; }
+        .theme-toggle .toggle-thumb { width: 18px; height: 18px; border-radius: 50%; background: white; position: absolute; top: 2px; left: 2px; transition: transform 0.3s, background 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         [data-theme="dark"] .theme-toggle .toggle-track { background: var(--accent); }
         [data-theme="dark"] .theme-toggle .toggle-thumb { transform: translateX(18px); background: #fff; }
 
-        .discord-icon {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 32px; height: 32px; border-radius: 50%; background: var(--bg-card);
-            transition: background 0.2s;
-        }
+        .discord-icon { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--bg-card); transition: background 0.2s; }
         .discord-icon:hover { background: var(--accent); color: #fff; }
         .discord-icon svg { width: 18px; height: 18px; fill: currentColor; }
 
-        /* Hero */
-        .hero {
-            padding: 120px 0 60px; min-height: 100vh;
-            display: flex; align-items: center; position: relative; overflow: hidden;
-        }
-        .hero::before {
-            content: ''; position: absolute; top: -30%; right: -10%;
-            width: 70%; height: 80%;
-            background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
-            pointer-events: none; z-index: 0;
-        }
-        .hero .container {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
-            align-items: center; position: relative; z-index: 1;
-        }
+        .hero { padding: 120px 0 60px; min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: -30%; right: -10%; width: 70%; height: 80%; background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+        .hero .container { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; position: relative; z-index: 1; }
         .hero-left { display: flex; flex-direction: column; gap: 16px; }
         .hero-title { font-size: 4rem; font-weight: 800; line-height: 1.1; }
-        .hero-title .highlight {
-            background: var(--accent-gradient);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        }
+        .hero-title .highlight { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .hero-sub { font-size: 1.4rem; font-weight: 600; color: var(--text-secondary); }
         .hero-desc { font-size: 1.1rem; color: var(--text-secondary); max-width: 460px; }
         .hero-actions { display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
-        .btn-hero {
-            padding: 14px 36px; border-radius: 40px; font-weight: 700; font-size: 1rem;
-            transition: all 0.25s; display: inline-block; border: none; cursor: pointer;
-        }
-        .btn-hero-primary {
-            background: var(--accent-gradient); color: #fff;
-            box-shadow: 0 4px 24px rgba(124,58,237,0.35);
-        }
+        .btn-hero { padding: 14px 36px; border-radius: 40px; font-weight: 700; font-size: 1rem; transition: all 0.25s; display: inline-block; border: none; cursor: pointer; }
+        .btn-hero-primary { background: var(--accent-gradient); color: #fff; box-shadow: 0 4px 24px rgba(124,58,237,0.35); }
         .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,58,237,0.5); }
         .btn-hero-secondary { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); }
         .btn-hero-secondary:hover { background: var(--border-color); }
         .hero-right { display: flex; justify-content: center; align-items: center; }
-        .hero-graphic {
-            width: 100%; max-width: 400px; aspect-ratio: 1/1;
-            background: radial-gradient(circle at 30% 30%, rgba(124,58,237,0.2), transparent 70%);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 8rem; opacity: 0.7; user-select: none;
-        }
+        .hero-graphic { width: 100%; max-width: 400px; aspect-ratio: 1/1; background: radial-gradient(circle at 30% 30%, rgba(124,58,237,0.2), transparent 70%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8rem; opacity: 0.7; user-select: none; }
 
-        /* 特色标签 */
         .features-tag { padding: 40px 0 20px; }
-        .features-tag .grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px;
-        }
-        .feature-tag-item {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 16px 20px; text-align: center;
-            transition: all 0.2s; color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;
-        }
-        .feature-tag-item:hover {
-            border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px);
-        }
+        .features-tag .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .feature-tag-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px 20px; text-align: center; transition: all 0.2s; color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; }
+        .feature-tag-item:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
         .feature-tag-item .icon { display: block; font-size: 1.8rem; margin-bottom: 6px; }
 
-        /* 产品展示 */
         .products-section { padding: 40px 0 60px; }
         .section-title { font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 8px; }
         .section-sub { text-align: center; color: var(--text-secondary); margin-bottom: 32px; }
-        .products-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;
-        }
-        .product-card {
-            background: var(--bg-card); border-radius: 16px; padding: 24px 20px;
-            border: 1px solid var(--border-color); transition: all 0.3s; display: flex; flex-direction: column;
-        }
-        .product-card:hover {
-            transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow);
-        }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+        .product-card { background: var(--bg-card); border-radius: 16px; padding: 24px 20px; border: 1px solid var(--border-color); transition: all 0.3s; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow); }
         .product-card .name { font-size: 1.2rem; font-weight: 700; }
         .product-card .price { font-size: 1.5rem; font-weight: 700; color: var(--accent-light); margin: 8px 0 4px; }
         .product-card .desc { color: var(--text-secondary); font-size: 0.9rem; flex: 1; margin-bottom: 16px; }
-        .product-card .btn-buy {
-            padding: 10px 0; text-align: center; border-radius: 30px;
-            background: var(--accent-gradient); color: #fff; font-weight: 600;
-            transition: all 0.2s; display: block; border: none; cursor: pointer;
-        }
+        .product-card .btn-buy { padding: 10px 0; text-align: center; border-radius: 30px; background: var(--accent-gradient); color: #fff; font-weight: 600; transition: all 0.2s; display: block; border: none; cursor: pointer; }
         .product-card .btn-buy:hover { transform: scale(1.02); box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
         .product-card .btn-buy-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); }
         .product-card .btn-buy-outline:hover { border-color: var(--accent); color: var(--text-primary); }
-
         .version-badge { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
-
-        /* 页脚 */
-        .footer {
-            padding: 32px 0; border-top: 1px solid var(--border-color);
-            text-align: center; color: var(--text-muted); font-size: 0.9rem;
-        }
+        .footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 0.9rem; }
         .footer .heart { color: #ef4444; }
 
         @media (max-width: 992px) {
@@ -223,6 +139,7 @@
     </style>
 </head>
 <body>
+
     <nav class="navbar" id="navbar">
         <div class="container">
             <a href="/" class="brand"><span class="highlight">IceCloud</span>&nbsp;&amp;&nbsp;Plux</a>
@@ -250,7 +167,7 @@
             <div class="hero-left">
                 <h1 class="hero-title"><span class="highlight">IceCloud & Plux</span></h1>
                 <div class="hero-sub">Minecraft Java 插件系列</div>
-                <p class="hero-desc">强大、可配置且易于使用的插件系列，覆盖世界控制、粒子特效与服务器管理。</p>
+                <p class="hero-desc">强大、可配置且易于使用的插件系列，覆盖世界控制、粒子特效、特殊工具与服务器管理。</p>
                 <div class="hero-actions">
                     <a href="#plugins" class="btn-hero btn-hero-primary">浏览插件</a>
                     <a href="sponsor" class="btn-hero btn-hero-secondary">支持我们</a>
@@ -282,23 +199,38 @@
         <div class="container">
             <h2 class="section-title">🛒 选择你的插件</h2>
             <p class="section-sub">所有插件均提供持续更新与专业技术支持</p>
+
             <div class="products-grid">
+                <!-- IceCloud -->
                 <div class="product-card">
-                    <div class="name">IceCloud 系列</div>
+                    <div class="name">❄️ IceCloud 系列</div>
                     <div class="price">免费</div>
                     <div class="desc">公会、优化、处罚、登录等实用插件，已停更但可继续使用。</div>
                     <a href="icecloud-download" class="btn-buy">下载 IceCloud</a>
                     <div class="version-badge">已停更</div>
                 </div>
+
+                <!-- Plux -->
                 <div class="product-card">
-                    <div class="name">Plux 系列</div>
+                    <div class="name">✨ Plux 系列</div>
                     <div class="price">免费</div>
                     <div class="desc">粒子特效、NPC、GUI、领地等全新互联系统，持续开发中。</div>
                     <a href="plux-download" class="btn-buy">下载 Plux</a>
                     <div class="version-badge">持续开发中</div>
                 </div>
+
+                <!-- 特殊插件 -->
                 <div class="product-card">
-                    <div class="name">付费插件</div>
+                    <div class="name">🔧 特殊插件</div>
+                    <div class="price">免费</div>
+                    <div class="desc">独立模块，提供独特功能与定制化工具，探索更多可能。</div>
+                    <a href="special-download" class="btn-buy">下载特殊插件</a>
+                    <div class="version-badge">独立模块</div>
+                </div>
+
+                <!-- 付费插件 -->
+                <div class="product-card">
+                    <div class="name">💎 付费插件</div>
                     <div class="price">¥ 29.99 起</div>
                     <div class="desc">高级专属功能、定制扩展与优先技术支持。</div>
                     <a href="premium" class="btn-buy">🛒 前往购买</a>
