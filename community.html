@@ -1,200 +1,105 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IceCloud & Plux · 社区</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #e9eef3 100%);
-            color: #2d3748;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-        header {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: #2d3748;
-            text-decoration: none;
-        }
-        .logo-img {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            object-fit: cover;
-            box-shadow: 0 6px 14px rgba(66, 153, 225, 0.3);
-        }
-        nav { display: flex; gap: 2rem; align-items: center; }
-        nav a {
-            text-decoration: none;
-            color: #4a5568;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-        nav a:hover { color: #3182ce; }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 3rem 1.5rem;
-        }
-        h1 {
-            font-size: 2.4rem;
-            font-weight: 800;
-            color: #1a202c;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-        .subtitle {
-            text-align: center;
-            color: #5a6c7d;
-            margin-bottom: 3rem;
-        }
-        .community-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        .community-card {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
-            transition: transform 0.2s;
-            border: 1px solid rgba(0,0,0,0.04);
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-        .community-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.06);
-        }
-        .community-icon {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
-        }
-        .community-card h3 {
-            font-weight: 700;
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-        }
-        .community-card p {
-            color: #5a6c7d;
-            font-size: 0.9rem;
-        }
-        .btn-community {
-            display: inline-block;
-            margin-top: 1rem;
-            padding: 0.5rem 1.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            background: #edf2f7;
-            color: #2d3748;
-            text-decoration: none;
-            transition: 0.2s;
-        }
-        .btn-community:hover {
-            background: #e2e8f0;
-        }
-        footer {
-            text-align: center;
-            padding: 2rem;
-            background: white;
-            border-top: 1px solid #edf2f7;
-            color: #a0aec0;
-            font-size: 0.85rem;
-            margin-top: 3rem;
-        }
-        footer a { color: #4a5568; font-weight: 600; text-decoration: none; }
-        footer a:hover { color: #3182ce; }
+        /* 复用相同的 CSS 变量、导航栏等样式（与 index.html 相同） */
+        :root { --bg-primary:#0b0d15; --bg-secondary:#131620; --bg-card:rgba(255,255,255,0.04); --bg-nav:rgba(11,13,21,0.0); --text-primary:#e8eaf0; --text-secondary:#9ca3af; --text-muted:#6b7280; --border-color:rgba(255,255,255,0.06); --accent:#7c3aed; --accent-light:#a78bfa; --accent-gradient:linear-gradient(135deg,#7c3aed,#a855f7); --shadow:0 4px 24px rgba(0,0,0,0.4); --nav-blur:12px; }
+        [data-theme="light"] { --bg-primary:#f8fafc; --bg-secondary:#ffffff; --bg-card:rgba(0,0,0,0.03); --bg-nav:rgba(248,250,252,0.0); --text-primary:#0f172a; --text-secondary:#475569; --text-muted:#94a3b8; --border-color:rgba(0,0,0,0.06); --accent:#7c3aed; --accent-light:#8b5cf6; --shadow:0 4px 24px rgba(0,0,0,0.08); }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg-primary); color:var(--text-primary); line-height:1.6; transition:background 0.3s,color 0.3s; }
+        a { color:inherit; text-decoration:none; }
+        .container { max-width:1200px; margin:0 auto; padding:0 24px; }
+        .navbar { position:fixed; top:0; left:0; right:0; z-index:1000; padding:16px 0; transition:background 0.3s,box-shadow 0.3s,border-color 0.3s; background:var(--bg-nav); border-bottom:1px solid transparent; }
+        .navbar.scrolled { background:var(--bg-secondary); border-bottom-color:var(--border-color); box-shadow:0 2px 20px rgba(0,0,0,0.1); }
+        [data-theme="light"] .navbar.scrolled { background:rgba(255,255,255,0.85); backdrop-filter:blur(var(--nav-blur)); }
+        [data-theme="dark"] .navbar.scrolled { background:rgba(11,13,21,0.85); backdrop-filter:blur(var(--nav-blur)); }
+        .navbar .container { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+        .brand { font-size:1.3rem; font-weight:700; color:var(--text-primary); }
+        .brand .highlight { color:var(--accent-light); }
+        .nav-links { display:flex; gap:20px; font-size:0.95rem; }
+        .nav-links a { color:var(--text-secondary); transition:color 0.2s; }
+        .nav-links a:hover { color:var(--text-primary); }
+        .nav-divider { width:1px; height:24px; background:var(--border-color); }
+        .theme-toggle { display:flex; align-items:center; gap:6px; cursor:pointer; }
+        .theme-toggle .toggle-track { width:40px; height:22px; border-radius:30px; background:var(--border-color); position:relative; }
+        .theme-toggle .toggle-thumb { width:18px; height:18px; border-radius:50%; background:white; position:absolute; top:2px; left:2px; transition:transform 0.3s; }
+        [data-theme="dark"] .theme-toggle .toggle-track { background:var(--accent); }
+        [data-theme="dark"] .theme-toggle .toggle-thumb { transform:translateX(18px); }
+        .hero { padding:120px 0 40px; text-align:center; }
+        .hero h1 { font-size:2.5rem; font-weight:800; }
+        .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:24px; margin-top:32px; }
+        .card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:24px; text-align:center; transition:all 0.3s; }
+        .card:hover { transform:translateY(-4px); border-color:var(--accent); }
+        .card h3 { font-size:1.3rem; font-weight:700; margin-bottom:8px; }
+        .card p { color:var(--text-secondary); font-size:0.9rem; }
+        .card .btn { display:inline-block; margin-top:16px; padding:8px 24px; border-radius:20px; background:var(--accent-gradient); color:#fff; font-weight:600; }
+        .footer { padding:32px 0; border-top:1px solid var(--border-color); text-align:center; color:var(--text-muted); margin-top:48px; }
     </style>
 </head>
 <body>
-    <header>
-        <a href="index" class="logo">
-            <img src="images/logo.png" alt="IceCloud & Plux" class="logo-img">
-            IceCloud & Plux
-        </a>
-        <nav>
-            <a href="index">首页</a>
-            <a href="index#plugins">插件</a>
-            <a href="#">文档</a>
-            <a href="community" style="color:#3182ce;">社区</a>
-            <a href="sponsor">赞助</a>
-            <a href="stats">运行统计</a>
-        </nav>
-    </header>
-
-    <main class="container">
-        <h1>👋 加入社区</h1>
-        <p class="subtitle">在这里找到我们，获取最新动态、技术支持，或与其他服主交流。</p>
-
-        <div class="community-grid">
-            <!-- GitHub -->
-            <a href="https://github.com/IceCloudPlux" target="_blank" rel="noopener noreferrer" class="community-card">
-                <div class="community-icon">🐙</div>
-                <h3>GitHub</h3>
-                <p>源码开放，欢迎 Star、Fork 和提交 Pull Request。</p>
-                <span class="btn-community">访问仓库</span>
-            </a>
-
-            <!-- Discord -->
-            <a href="https://discord.gg/BJS7KdSG" target="_blank" rel="noopener noreferrer" class="community-card">
-                <div class="community-icon">💬</div>
-                <h3>Discord</h3>
-                <p>即时交流，反馈问题，参与测试讨论。</p>
-                <span class="btn-community">加入服务器</span>
-            </a>
-
-            <!-- QQ群 -->
-            <a href="https://qm.qq.com/q/Kfelqf0iEs" target="_blank" rel="noopener noreferrer" class="community-card">
-                <div class="community-icon">🐧</div>
-                <h3>QQ 群</h3>
-                <p>国内服主交流，插件使用疑问，版本更新通知。</p>
-                <span class="btn-community">加入群聊</span>
-            </a>
-
-            <!-- 建议与反馈（可选） -->
-            <div class="community-card">
-                <div class="community-icon">📬</div>
-                <h3>建议与反馈</h3>
-                <p>有想法或遇到 Bug？欢迎在 GitHub Issues 或 Discord 中告诉我们。</p>
-                <span class="btn-community">提交反馈</span>
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="/" class="brand"><span class="highlight">IceCloud</span>&nbsp;&amp;&nbsp;Plux</a>
+            <div class="nav-links">
+                <a href="/">首页</a>
+                <a href="community">社区</a>
+                <a href="sponsor">赞助</a>
+                <a href="stats">运行统计</a>
+                <span class="nav-divider"></span>
+                <div class="theme-toggle" id="themeToggle" role="button" tabindex="0">
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                </div>
             </div>
         </div>
-    </main>
+    </nav>
 
-    <footer>
-        <p>© 2026 IceCloud & Plux Dev · 本网站与 Mojang 或 Microsoft 无关。</p>
-        <p style="margin-top: 0.5rem;">
-            <a href="index.html">返回首页</a>
-        </p>
+    <section class="hero">
+        <div class="container">
+            <h1>👋 加入社区</h1>
+            <p style="color:var(--text-secondary);">在这里找到我们，获取最新动态、技术支持，或与其他服主交流。</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="cards">
+            <div class="card">
+                <h3>🐙 GitHub</h3>
+                <p>源码开放，欢迎 Star、Fork 和提交 Pull Request。</p>
+                <a href="https://github.com/IcecloudPlux" target="_blank" class="btn">访问仓库</a>
+            </div>
+            <div class="card">
+                <h3>💬 Discord</h3>
+                <p>即时交流，反馈问题，参与测试讨论。</p>
+                <a href="https://discord.gg/BJS7KdSG" target="_blank" class="btn">加入服务器</a>
+            </div>
+            <div class="card">
+                <h3>🐧 QQ 群</h3>
+                <p>国内服主交流，插件使用疑问，版本更新通知。</p>
+                <a href="https://qm.qq.com/q/Kfelqf0iEs" target="_blank" class="btn">加入群聊</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2026 IceCloud & Plux Dev</p>
     </footer>
+
+    <script>
+        (function(){
+            const toggle=document.getElementById('themeToggle');
+            const html=document.documentElement;
+            html.setAttribute('data-theme', localStorage.getItem('theme')||'dark');
+            toggle.addEventListener('click',()=>{
+                const next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+                html.setAttribute('data-theme',next);
+                localStorage.setItem('theme',next);
+            });
+            const navbar=document.getElementById('navbar');
+            window.addEventListener('scroll',()=>navbar.classList.toggle('scrolled',window.pageYOffset>20));
+        })();
+    </script>
 </body>
 </html>
