@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IceCloud & Plux · 官网</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -52,7 +56,11 @@
             box-shadow: 0 6px 14px rgba(66, 153, 225, 0.3);
         }
 
-        nav { display: flex; gap: 2rem; align-items: center; }
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
         nav a {
             text-decoration: none;
             color: #4a5568;
@@ -60,11 +68,78 @@
             font-size: 0.9rem;
             transition: color 0.2s;
         }
-        nav a:hover { color: #3182ce; }
+        nav a:hover {
+            color: #3182ce;
+        }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 3rem 1.5rem; }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
 
-        .hero { text-align: center; margin-bottom: 4rem; }
+        /* ===== 公告栏 ===== */
+        .announcement-bar {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-bottom: 2px solid #f59e0b;
+            padding: 0.85rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            font-weight: 600;
+            color: #92400e;
+            font-size: 0.95rem;
+            box-shadow: inset 0 -1px 0 rgba(245, 158, 11, 0.3);
+        }
+
+        .announcement-bar .icon {
+            font-size: 1.3rem;
+            animation: pulse-icon 1.8s ease-in-out infinite;
+        }
+
+        .announcement-bar .highlight {
+            background: #f59e0b;
+            color: #fff;
+            padding: 0.15rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .announcement-bar .close-announce {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #92400e;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            margin-left: 0.5rem;
+            padding: 0 0.3rem;
+            line-height: 1;
+        }
+        .announcement-bar .close-announce:hover {
+            opacity: 1;
+        }
+
+        @keyframes pulse-icon {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+        /* ===== 原有样式 ===== */
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
         .hero h1 {
             font-size: 2.8rem;
             font-weight: 800;
@@ -74,7 +149,12 @@
             background-clip: text;
             margin-bottom: 0.8rem;
         }
-        .hero .subtitle { font-size: 1.1rem; color: #5a6c7d; max-width: 600px; margin: 0 auto 1.5rem; }
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: #5a6c7d;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
         .hero-badge {
             display: inline-block;
             background: #bee3f8;
@@ -108,75 +188,171 @@
             box-shadow: 0 25px 45px rgba(0, 0, 0, 0.08), 0 10px 20px rgba(0, 0, 0, 0.04);
         }
 
-        .card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
         .card-icon {
-            width: 56px; height: 56px; border-radius: 18px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
             box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
         }
 
-        .ice-icon { background: linear-gradient(135deg, #63b3ed, #3182ce); }
-        .plux-icon { background: linear-gradient(135deg, #9f7aea, #6b46c1); }
-        .premium-icon { background: linear-gradient(135deg, #f6ad55, #ed8936); }
+        .ice-icon {
+            background: linear-gradient(135deg, #63b3ed, #3182ce);
+        }
+        .plux-icon {
+            background: linear-gradient(135deg, #9f7aea, #6b46c1);
+        }
+        .premium-icon {
+            background: linear-gradient(135deg, #f6ad55, #ed8936);
+        }
 
-        .card-header h2 { font-weight: 700; font-size: 1.6rem; color: #1a202c; }
-        .tagline { font-weight: 600; color: #4a5568; margin-bottom: 1.2rem; font-size: 0.9rem; }
+        .card-header h2 {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: #1a202c;
+        }
+        .tagline {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 1.2rem;
+            font-size: 0.9rem;
+        }
 
         .feature-list {
-            list-style: none; margin: 0.8rem 0 1.8rem; flex: 1;
+            list-style: none;
+            margin: 0.8rem 0 1.8rem;
+            flex: 1;
         }
 
         .feature-list li {
-            padding: 0.5rem 0; display: flex; align-items: center; gap: 0.6rem;
-            color: #4a5568; font-size: 0.95rem; border-bottom: 1px solid #f7fafc;
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #4a5568;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f7fafc;
         }
 
-        .feature-list li:last-child { border-bottom: none; }
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
         .feature-list li::before {
-            content: "✓"; font-weight: bold; color: #4299e1; font-size: 1rem; width: 20px;
+            content: "✓";
+            font-weight: bold;
+            color: #4299e1;
+            font-size: 1rem;
+            width: 20px;
         }
 
         .btn {
-            display: inline-block; padding: 0.75rem 1.6rem; border-radius: 14px;
-            font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; font-size: 0.9rem;
-            margin-right: 0.5rem; margin-bottom: 0.5rem;
+            display: inline-block;
+            padding: 0.75rem 1.6rem;
+            border-radius: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        .btn-primary { background: #3182ce; color: white; box-shadow: 0 8px 16px rgba(49,130,206,0.25); }
-        .btn-primary:hover { background: #2b6cb0; transform: scale(1.02); }
+        .btn-primary {
+            background: #3182ce;
+            color: white;
+            box-shadow: 0 8px 16px rgba(49, 130, 206, 0.25);
+        }
+        .btn-primary:hover {
+            background: #2b6cb0;
+            transform: scale(1.02);
+        }
 
-        .btn-secondary { background: #805ad5; color: white; box-shadow: 0 8px 16px rgba(128,90,213,0.25); }
-        .btn-secondary:hover { background: #6b46c1; transform: scale(1.02); }
+        .btn-secondary {
+            background: #805ad5;
+            color: white;
+            box-shadow: 0 8px 16px rgba(128, 90, 213, 0.25);
+        }
+        .btn-secondary:hover {
+            background: #6b46c1;
+            transform: scale(1.02);
+        }
 
-        .btn-premium { background: #ed8936; color: white; box-shadow: 0 8px 16px rgba(237,137,54,0.3); }
-        .btn-premium:hover { background: #dd6b20; transform: scale(1.02); }
+        .btn-premium {
+            background: #ed8936;
+            color: white;
+            box-shadow: 0 8px 16px rgba(237, 137, 54, 0.3);
+        }
+        .btn-premium:hover {
+            background: #dd6b20;
+            transform: scale(1.02);
+        }
 
-        .btn-outline { background: transparent; border: 2px solid #cbd5e0; color: #4a5568; }
-        .btn-outline:hover { border-color: #a0aec0; background: #f7fafc; }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #cbd5e0;
+            color: #4a5568;
+        }
+        .btn-outline:hover {
+            border-color: #a0aec0;
+            background: #f7fafc;
+        }
 
-        .version-badge { font-size: 0.8rem; color: #718096; margin-top: 1rem; font-weight: 500; }
+        .version-badge {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
 
         .info-box {
-            background: white; border-radius: 20px; padding: 2rem; margin-top: 2rem;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.03); text-align: center; border: 1px solid #edf2f7;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.03);
+            text-align: center;
+            border: 1px solid #edf2f7;
         }
 
         footer {
-            text-align: center; padding: 2rem; background: white; border-top: 1px solid #edf2f7;
-            color: #a0aec0; font-size: 0.85rem; margin-top: 3rem;
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-top: 1px solid #edf2f7;
+            color: #a0aec0;
+            font-size: 0.85rem;
+            margin-top: 3rem;
         }
 
-        footer a { color: #4a5568; font-weight: 600; text-decoration: none; }
-        footer a:hover { color: #3182ce; }
+        footer a {
+            color: #4a5568;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #3182ce;
+        }
 
         /* 弹窗样式 */
         .welcome-modal {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
             z-index: 9999;
@@ -191,12 +367,18 @@
             max-width: 400px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             animation: modalFadeIn 0.3s ease;
         }
         @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
         .welcome-modal-content h2 {
             font-size: 1.5rem;
@@ -223,9 +405,27 @@
         }
 
         @media (max-width: 650px) {
-            header { flex-direction: column; gap: 1rem; padding: 1rem; }
-            nav { gap: 1.2rem; }
-            .hero h1 { font-size: 2rem; }
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            nav {
+                gap: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .announcement-bar {
+                padding: 0.65rem 1rem;
+                font-size: 0.85rem;
+                flex-direction: column;
+                gap: 0.4rem;
+                text-align: center;
+            }
+            .announcement-bar .close-announce {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -246,6 +446,20 @@
             <a href="stats">运行统计</a>
         </nav>
     </header>
+
+    <!-- ===== 公告栏 ===== -->
+    <div class="announcement-bar" id="announcementBar">
+        <span class="icon">🚧</span>
+        <span>
+            <strong>服务器正在迁移并翻新中</strong>
+            ，
+            <span style="font-weight:700;">期间可能中断至多 2 日</span>
+            ，
+            请各位玩家安排好访问时间。
+            <span class="highlight">重要</span>
+        </span>
+        <button class="close-announce" id="closeAnnounce" aria-label="关闭公告">✕</button>
+    </div>
 
     <main class="container">
         <section class="hero">
@@ -331,8 +545,8 @@
     <footer>
         <p>© 2026 IceCloud & Plux Dev · 本网站与 Mojang 或 Microsoft 无关。</p>
         <p style="margin-top: 0.5rem;">
-            <a href="https://github.com/IcecloudPlux" target="_blank" rel="noopener noreferrer">GitHub</a> · 
-            <a href="https://discord.gg/BJS7KdSG" target="_blank" rel="noopener noreferrer">Discord</a> · 
+            <a href="https://github.com/IcecloudPlux" target="_blank" rel="noopener noreferrer">GitHub</a> ·
+            <a href="https://discord.gg/BJS7KdSG" target="_blank" rel="noopener noreferrer">Discord</a> ·
             <a href="https://qm.qq.com/q/Kfelqf0iEs" target="_blank" rel="noopener noreferrer">QQGroup</a>
             <a href="sponsor">❤️ 赞助我们</a>
         </p>
@@ -349,26 +563,37 @@
 
     <script>
         (function() {
+            // ===== 公告栏关闭 =====
+            const announcement = document.getElementById('announcementBar');
+            const closeBtn = document.getElementById('closeAnnounce');
+            const ANNOUNCE_KEY = 'icecloud_announcement_closed';
+
+            // 如果用户之前关闭过公告，默认隐藏
+            if (localStorage.getItem(ANNOUNCE_KEY)) {
+                announcement.style.display = 'none';
+            }
+
+            closeBtn.addEventListener('click', function() {
+                announcement.style.display = 'none';
+                localStorage.setItem(ANNOUNCE_KEY, 'true');
+            });
+
+            // ===== 欢迎弹窗 =====
             const modal = document.getElementById('welcomeModal');
-            const closeBtn = document.getElementById('closeWelcomeModal');
+            const closeModalBtn = document.getElementById('closeWelcomeModal');
             const STORAGE_KEY = 'icecloud_welcome_shown';
 
-            // 检查是否已经显示过弹窗
             if (!localStorage.getItem(STORAGE_KEY)) {
-                // 显示弹窗
                 modal.classList.add('active');
             }
 
-            // 关闭弹窗
             function closeModal() {
                 modal.classList.remove('active');
-                // 存入标记，确保以后不再显示
                 localStorage.setItem(STORAGE_KEY, 'true');
             }
 
-            closeBtn.addEventListener('click', closeModal);
+            closeModalBtn.addEventListener('click', closeModal);
 
-            // 点击背景遮罩也可关闭（可选）
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) {
                     closeModal();
