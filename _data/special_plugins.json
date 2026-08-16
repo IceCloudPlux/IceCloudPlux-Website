@@ -1,9 +1,9 @@
 [
   {
-    "title": "特殊插件示例",
-    "version": "v1.0.0",
-    "mc_version": "1.20 - 1.21",
-    "date": "2026-08-15",
+    "title": "IceCloudOptimizer",
+    "version": "v2.0",
+    "mc_version": "1.7.10 - 26.X",
+    "date": "2026-08-16",
     "download_url": "https://example.com/plugin.jar"
   }
 ]
