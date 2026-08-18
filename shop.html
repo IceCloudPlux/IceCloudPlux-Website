@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IceCloud & Plux · 插件商店</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: all var(--transition);
+        }
+        .product-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+        .product-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .product-card .desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            flex: 1;
+            margin: 8px 0;
+        }
+        .product-card .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin: 4px 0;
+        }
+        .product-card .price {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent-light);
+            margin: 8px 0;
+        }
+        .product-card .btn-buy {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 30px;
+            background: var(--accent-gradient);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .product-card .btn-buy:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+        }
+        .product-card .btn-buy:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="/shop.html" class="brand"><span class="highlight">IceCloud</span> &amp; Plux</a>
+            <div class="nav-links">
+                <a href="/shop.html">商店</a>
+                <a href="/dashboard.html">仪表盘</a>
+                <a href="/admin.html">管理</a>
+                <span class="nav-divider"></span>
+                <div class="theme-toggle" id="themeToggle" role="button" tabindex="0" aria-label="切换主题">
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" style="padding: 120px 0 40px; text-align: center;">
+        <div class="container">
+            <h1 style="font-size: 3rem; font-weight: 800;">
+                <span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">IceCloud</span>
+                &amp; <span style="color: var(--accent-light);">Plux</span>
+            </h1>
+            <p style="color: var(--text-secondary); font-size: 1.2rem; max-width: 600px; margin: 16px auto;">专业 Minecraft 插件 · 持续更新 · 优质服务</p>
+        </div>
+    </section>
+
+    <section class="container" style="padding: 20px 0 60px;">
+        <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 8px;">🛒 所有插件</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">选择你需要的插件，立即购买，自动发货。</p>
+        <div id="productsContainer" class="product-grid">
+            <!-- 动态渲染 -->
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Made with <span class="heart">❤️</span> by IceCloud &amp; Plux Dev</p>
+        </div>
+    </footer>
+
+    <script src="js/common.js"></script>
+    <script>
+        initTheme();
+        initNavbarScroll();
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+        const userToken = getToken();
+
+        async function loadProducts() {
+            const products = await loadData('products');
+            const container = document.getElementById('productsContainer');
+            if (!products || products.length === 0) {
+                container.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--text-muted);">暂无产品</p>`;
+                return;
+            }
+            container.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <h3>${escapeHtml(p.name)}</h3>
+                    <div class="desc">${escapeHtml(p.description || '')}</div>
+                    <div class="meta">
+                        <span>版本 ${escapeHtml(p.version)}</span>
+                        <span>MC ${escapeHtml(p.mc_version)}</span>
+                        <span>${escapeHtml(p.date)}</span>
+                    </div>
+                    <div class="price">¥${Number(p.price).toFixed(2)}</div>
+                    <button class="btn-buy" data-id="${p.id}" onclick="buyProduct(${p.id})">立即购买</button>
+                </div>
+            `).join('');
+        }
+
+        async function buyProduct(productId) {
+            if (!userToken) {
+                alert('请先登录管理后台获取 GitHub Token，或联系管理员购买。');
+                return;
+            }
+            const btn = document.querySelector(`.btn-buy[data-id="${productId}"]`);
+            btn.disabled = true;
+            btn.textContent = '创建订单...';
+            try {
+                const res = await fetch('/api/create_order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userToken}`
+                    },
+                    body: JSON.stringify({ productId })
+                });
+                const data = await res.json();
+                if (data.pay_url) {
+                    window.location.href = data.pay_url;
+                } else {
+                    alert('创建订单失败：' + (data.error || '未知错误'));
+                }
+            } catch (err) {
+                alert('请求失败：' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '立即购买';
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        loadProducts();
+    </script>
+</body>
+</html>
