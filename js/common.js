@@ -1,26 +1,26 @@
-/**
- * common.js – 通用工具函数
- * 包含 GitHub API 操作、加解密、主题切换、导航栏滚动效果
- */
+// ============================================================
+// 配置（请修改为你自己的仓库信息）
+// ============================================================
 const REPO_OWNER = 'IceCloudPlux';
-const REPO_NAME = 'IceCloudPlux-Website';
+const REPO_NAME = 'IceCloudPlux-Website';  // ⚠️ 注意这里改成你的仓库名
 const BRANCH = 'main';
 const DATA_PATH = '_data';
-const OBSCURE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 const OBSCURE_SALT = 'SALT_';
+
 function encodeObscure64(str) {
     const salted = OBSCURE_SALT + str + '_' + OBSCURE_SALT;
     let encoded = btoa(unescape(encodeURIComponent(salted)));
     encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     return encoded;
 }
+
 function decodeObscure64(encoded) {
     let base64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
     while (base64.length % 4) base64 += '=';
     try {
         const decoded = decodeURIComponent(escape(atob(base64)));
         if (decoded.startsWith(OBSCURE_SALT) && decoded.endsWith('_' + OBSCURE_SALT)) {
-            return decoded.slice(OBSCURE_SALT.length, - (OBSCURE_SALT.length + 1));
+            return decoded.slice(OBSCURE_SALT.length, -(OBSCURE_SALT.length + 1));
         }
         return decoded;
     } catch (e) {
@@ -29,22 +29,35 @@ function decodeObscure64(encoded) {
 }
 
 // ============================================================
-// GitHub API 基础函数
+// GitHub API 函数（修复版）
 // ============================================================
-
 async function getFileContent(path, token = '') {
     const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
     const headers = { 'Accept': 'application/vnd.github.v3+json' };
     if (token) headers['Authorization'] = `token ${token}`;
-    const res = await fetch(url, { headers });
-    if (res.status === 404) return null;
-    if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || '获取文件失败');
+
+    try {
+        const res = await fetch(url, { headers });
+        const text = await res.text();
+        console.log(`[getFileContent] ${path} 状态码: ${res.status}`);
+
+        // 检查是否为有效 JSON
+        if (!text.startsWith('{') && !text.startsWith('[')) {
+            const match = text.match(/<title>(.*?)<\/title>/);
+            const title = match ? match[1] : '响应不是 JSON';
+            throw new Error(`${title} (HTTP ${res.status})`);
+        }
+
+        const data = JSON.parse(text);
+        if (res.status === 404) return null;
+        if (!res.ok) throw new Error(data.message || `HTTP ${res.status}`);
+
+        const content = atob(data.content.replace(/\s/g, ''));
+        return { content: JSON.parse(content), sha: data.sha };
+    } catch (err) {
+        console.error(`[getFileContent] 获取 ${path} 失败:`, err);
+        throw err;
     }
-    const data = await res.json();
-    const content = atob(data.content.replace(/\s/g, ''));
-    return { content: JSON.parse(content), sha: data.sha };
 }
 
 async function saveFileContent(path, data, token, message = '更新数据', sha = null) {
@@ -77,10 +90,12 @@ async function loadData(fileName, token = '') {
     try {
         const result = await getFileContent(path, token);
         if (result) return result.content;
-        else return [];
-    } catch (e) {
-        console.error(`加载 ${fileName} 失败:`, e);
         return [];
+    } catch (e) {
+        if (e.message && e.message.includes('404')) {
+            return [];
+        }
+        throw e;
     }
 }
 
@@ -97,7 +112,6 @@ async function saveData(fileName, data, token, message) {
 // ============================================================
 // 主题切换与导航栏
 // ============================================================
-
 function initTheme() {
     const theme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', theme);
@@ -122,7 +136,6 @@ function initNavbarScroll() {
 // ============================================================
 // Token 管理
 // ============================================================
-
 function getToken() {
     return localStorage.getItem('gh_token') || '';
 }
