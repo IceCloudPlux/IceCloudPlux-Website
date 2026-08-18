@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仪表盘 · IceCloud & Plux</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-card .number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--accent-light);
+        }
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .license-status {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-valid { background: rgba(34,197,94,0.2); color: #22c55e; }
+        .status-expired { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .status-expiring { background: rgba(234,179,8,0.2); color: #eab308; }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            margin: 6px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--accent-gradient);
+            transition: width 0.5s;
+        }
+        .table-wrap {
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="/shop.html" class="brand"><span class="highlight">IceCloud</span> &amp; Plux</a>
+            <div class="nav-links">
+                <a href="/shop.html">商店</a>
+                <a href="/dashboard.html">仪表盘</a>
+                <a href="/admin.html">管理</a>
+                <span class="nav-divider"></span>
+                <div class="theme-toggle" id="themeToggle" role="button" tabindex="0" aria-label="切换主题">
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="container" style="padding-top: 100px; padding-bottom: 40px;">
+        <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 24px;">📊 仪表盘</h1>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card"><div class="number" id="totalProducts">-</div><div class="label">总产品数</div></div>
+            <div class="stat-card"><div class="number" id="totalLicenses">-</div><div class="label">总许可证数</div></div>
+            <div class="stat-card"><div class="number" id="validLicenses">-</div><div class="label">有效许可证</div></div>
+            <div class="stat-card"><div class="number" id="expiredLicenses">-</div><div class="label">已过期</div></div>
+            <div class="stat-card"><div class="number" id="activeServers">-</div><div class="label">总激活服务器</div></div>
+        </div>
+
+        <!-- 许可证列表（增强版） -->
+        <div class="card">
+            <div class="card-title">🔑 许可证列表 <span style="font-weight:normal; font-size:0.9rem; color:var(--text-secondary);">（含状态和剩余天数）</span></div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>许可证 (Obscure64)</th>
+                            <th>关联产品</th>
+                            <th>到期日期</th>
+                            <th>剩余天数</th>
+                            <th>状态</th>
+                            <th>最大服务器</th>
+                            <th>已激活</th>
+                        </tr>
+                    </thead>
+                    <tbody id="licenseTableBody">
+                        <tr><td colspan="7" style="text-align:center; color:var(--text-muted);">加载中…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 产品列表（简洁） -->
+        <div class="card">
+            <div class="card-title">📦 产品列表</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>版本</th>
+                            <th>MC 版本</th>
+                            <th>价格</th>
+                            <th>发布日期</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <tr><td colspan="5" style="text-align:center; color:var(--text-muted);">加载中…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Made with <span class="heart">❤️</span> by IceCloud &amp; Plux Dev</p>
+        </div>
+    </footer>
+
+    <script src="js/common.js"></script>
+    <script>
+        initTheme();
+        initNavbarScroll();
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+        async function loadDashboard() {
+            const products = await loadData('products');
+            const licenses = await loadData('licenses');
+
+            // 统计
+            const totalProducts = products ? products.length : 0;
+            const totalLicenses = licenses ? licenses.length : 0;
+            let validCount = 0, expiredCount = 0, totalServers = 0;
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            if (licenses) {
+                licenses.forEach(l => {
+                    const expiry = new Date(l.expiry_date);
+                    expiry.setHours(0,0,0,0);
+                    if (expiry >= today) validCount++;
+                    else expiredCount++;
+                    totalServers += (l.activated_servers || []).length;
+                });
+            }
+
+            document.getElementById('totalProducts').textContent = totalProducts;
+            document.getElementById('totalLicenses').textContent = totalLicenses;
+            document.getElementById('validLicenses').textContent = validCount;
+            document.getElementById('expiredLicenses').textContent = expiredCount;
+            document.getElementById('activeServers').textContent = totalServers;
+
+            // 渲染许可证表格
+            const licenseBody = document.getElementById('licenseTableBody');
+            if (!licenses || licenses.length === 0) {
+                licenseBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">暂无许可证</td></tr>`;
+            } else {
+                licenseBody.innerHTML = licenses.map(l => {
+                    const product = products ? products.find(p => p.id === l.product_id) : null;
+                    const productName = product ? product.name : '未知产品';
+                    const expiry = new Date(l.expiry_date);
+                    expiry.setHours(0,0,0,0);
+                    const diffDays = Math.ceil((expiry - today) / (1000*60*60*24));
+                    let statusClass, statusText;
+                    if (diffDays < 0) {
+                        statusClass = 'status-expired';
+                        statusText = '已过期';
+                    } else if (diffDays <= 7) {
+                        statusClass = 'status-expiring';
+                        statusText = '即将过期 (' + diffDays + '天)';
+                    } else {
+                        statusClass = 'status-valid';
+                        statusText = '有效 (' + diffDays + '天)';
+                    }
+                    const maxDays = 365;
+                    const progress = Math.min(100, Math.max(0, (diffDays / maxDays) * 100));
+                    return `
+                        <tr>
+                            <td><code>${escapeHtml(l.license_key)}</code></td>
+                            <td>${escapeHtml(productName)}</td>
+                            <td>${escapeHtml(l.expiry_date)}</td>
+                            <td>
+                                <span style="font-weight:600;">${diffDays >= 0 ? diffDays : '已过期'}</span>
+                                <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div>
+                            </td>
+                            <td><span class="license-status ${statusClass}">${statusText}</span></td>
+                            <td>${l.max_servers}</td>
+                            <td>${(l.activated_servers || []).length}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // 渲染产品表格
+            const productBody = document.getElementById('productTableBody');
+            if (!products || products.length === 0) {
+                productBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">暂无产品</td></tr>`;
+            } else {
+                productBody.innerHTML = products.map(p => `
+                    <tr>
+                        <td>${escapeHtml(p.name)}</td>
+                        <td>${escapeHtml(p.version)}</td>
+                        <td>${escapeHtml(p.mc_version)}</td>
+                        <td>¥${Number(p.price).toFixed(2)}</td>
+                        <td>${escapeHtml(p.date)}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>
