@@ -225,14 +225,18 @@
             }
             token = inputToken;
             try {
-                await getFileContent('README.md', token);
+                const result = await getFileContent('README.md', token);
+                if (!result) {
+                    throw new Error('README.md 不存在，请先在仓库根目录创建 README.md');
+                }
                 setToken(token);
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('adminSection').style.display = 'block';
                 loadAllData();
             } catch (err) {
-                document.getElementById('loginError').textContent = 'Token 无效或无仓库权限: ' + err.message;
+                document.getElementById('loginError').textContent = '登录失败: ' + err.message;
                 token = '';
+                console.error('登录错误:', err);
             }
         };
 
