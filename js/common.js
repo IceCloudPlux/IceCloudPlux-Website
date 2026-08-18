@@ -37,12 +37,19 @@ async function getFileContent(path, token = '') {
     if (token) headers['Authorization'] = `token ${token}`;
 
     try {
+        console.log(`[getFileContent] 请求 URL: ${url}`);
         const res = await fetch(url, { headers });
         const text = await res.text();
-        console.log(`[getFileContent] ${path} 状态码: ${res.status}`);
+        console.log(`[getFileContent] 状态码: ${res.status}`);
+        console.log(`[getFileContent] Content-Type: ${res.headers.get('content-type')}`);
+        console.log(`[getFileContent] 响应前 300 字符:`, text.slice(0, 300));
 
         // 检查是否为有效 JSON
         if (!text.startsWith('{') && !text.startsWith('[')) {
+            // 可能返回了 HTML 或 Markdown
+            if (text.trim().startsWith('#')) {
+                throw new Error(`响应是 Markdown 而非 JSON。可能仓库名 "${REPO_NAME}" 或路径 "${path}" 不正确，或 Token 无效。`);
+            }
             const match = text.match(/<title>(.*?)<\/title>/);
             const title = match ? match[1] : '响应不是 JSON';
             throw new Error(`${title} (HTTP ${res.status})`);
@@ -59,7 +66,6 @@ async function getFileContent(path, token = '') {
         throw err;
     }
 }
-
 async function saveFileContent(path, data, token, message = '更新数据', sha = null) {
     const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
     const payload = {
