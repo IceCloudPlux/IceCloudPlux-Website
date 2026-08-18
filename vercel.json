@@ -1,0 +1,19 @@
+{
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/shop.html" }
+  ],
+  "env": {
+    "EPAY_PID": "@epay_pid",
+    "EPAY_KEY": "@epay_key",
+    "GITHUB_TOKEN": "@github_token",
+    "NOTIFY_URL": "@notify_url",
+    "RETURN_URL": "@return_url",
+    "REPO_OWNER": "IceCloudPlux",
+    "REPO_NAME": "IceCloudPlux.github.io"
+  }
+}
