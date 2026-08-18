@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "name": "BedWarsHeypixel",
+    "description": "高仿照布吉岛服务器起床战争插件，基于BedWars1058修改。",
+    "version": "26.7",
+    "mc_version": "1.20.1",
+    "price": 16.00,
+    "date": "2026-07-31",
+    "download_url": "https://example.com/bedwars-26.7.jar"
+  }
+]
