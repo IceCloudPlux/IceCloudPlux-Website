@@ -2,7 +2,7 @@
 // 配置（请修改为你自己的仓库信息）
 // ============================================================
 const REPO_OWNER = 'IceCloudPlux';
-const REPO_NAME = 'IceCloudPlux-Website';  // ⚠️ 注意这里改成你的仓库名
+const REPO_NAME = 'IceCloudPlux-Website';
 const BRANCH = 'main';
 const DATA_PATH = '_data';
 const OBSCURE_SALT = 'SALT_';
@@ -29,7 +29,7 @@ function decodeObscure64(encoded) {
 }
 
 // ============================================================
-// GitHub API 函数（修复版）
+// GitHub API 函数
 // ============================================================
 async function getFileContent(path, token = '') {
     const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
@@ -44,9 +44,7 @@ async function getFileContent(path, token = '') {
         console.log(`[getFileContent] Content-Type: ${res.headers.get('content-type')}`);
         console.log(`[getFileContent] 响应前 300 字符:`, text.slice(0, 300));
 
-        // 检查是否为有效 JSON
         if (!text.startsWith('{') && !text.startsWith('[')) {
-            // 可能返回了 HTML 或 Markdown
             if (text.trim().startsWith('#')) {
                 throw new Error(`响应是 Markdown 而非 JSON。可能仓库名 "${REPO_NAME}" 或路径 "${path}" 不正确，或 Token 无效。`);
             }
@@ -66,6 +64,7 @@ async function getFileContent(path, token = '') {
         throw err;
     }
 }
+
 async function saveFileContent(path, data, token, message = '更新数据', sha = null) {
     const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
     const payload = {
