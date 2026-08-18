@@ -75,6 +75,7 @@
 </head>
 <body>
 
+    <!-- 导航栏 -->
     <nav class="navbar" id="navbar">
         <div class="container">
             <a href="/shop.html" class="brand"><span class="highlight">IceCloud</span> &amp; Plux</a>
@@ -115,9 +116,7 @@
             <button class="tab-btn" data-panel="plugins">📁 插件管理</button>
         </div>
 
-        <!-- ============================================================ -->
         <!-- 面板1: 产品管理 -->
-        <!-- ============================================================ -->
         <div id="panel-products" class="panel active">
             <div class="action-bar">
                 <h2 style="font-size:1.3rem;">产品列表</h2>
@@ -133,9 +132,7 @@
             </div>
         </div>
 
-        <!-- ============================================================ -->
         <!-- 面板2: 许可证管理 -->
-        <!-- ============================================================ -->
         <div id="panel-licenses" class="panel">
             <div class="action-bar">
                 <h2 style="font-size:1.3rem;">许可证列表</h2>
@@ -151,22 +148,18 @@
             </div>
         </div>
 
-        <!-- ============================================================ -->
         <!-- 面板3: 插件管理（分类） -->
-        <!-- ============================================================ -->
         <div id="panel-plugins" class="panel">
             <div class="action-bar">
                 <h2 style="font-size:1.3rem;">插件列表</h2>
                 <button class="btn btn-primary" onclick="openPluginModal()">+ 添加插件</button>
             </div>
-
             <!-- 子标签：插件分类 -->
             <div class="sub-tabs" id="pluginSubTabs">
                 <button class="sub-tab active" data-file="icecloud_plugins">❄️ IceCloud</button>
                 <button class="sub-tab" data-file="plux_plugins">✨ Plux</button>
                 <button class="sub-tab" data-file="special_plugins">🔧 特殊插件</button>
             </div>
-
             <div class="card">
                 <div class="table-wrap">
                     <table>
@@ -178,9 +171,7 @@
         </div>
     </section>
 
-    <!-- ============================================================ -->
     <!-- 模态框（通用） -->
-    <!-- ============================================================ -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" id="modalContent">
             <div class="modal-header">
@@ -215,7 +206,7 @@
         let currentPluginFile = 'icecloud_plugins';
 
         // ============================================================
-        // 登录 / 登出
+        // 登录 / 登出（挂载到 window）
         // ============================================================
         window.login = async function() {
             const inputToken = document.getElementById('tokenInput').value.trim();
@@ -225,9 +216,12 @@
             }
             token = inputToken;
             try {
-                const result = await getFileContent('README.md', token);
-                if (!result) {
-                    throw new Error('README.md 不存在，请先在仓库根目录创建 README.md');
+                // 使用 GitHub API 验证 Token 是否有效
+                const testRes = await fetch('https://api.github.com/user', {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                if (!testRes.ok) {
+                    throw new Error('Token 无效或已过期，请重新生成');
                 }
                 setToken(token);
                 document.getElementById('loginSection').style.display = 'none';
@@ -235,8 +229,8 @@
                 loadAllData();
             } catch (err) {
                 document.getElementById('loginError').textContent = '登录失败: ' + err.message;
-                token = '';
                 console.error('登录错误:', err);
+                token = '';
             }
         };
 
@@ -258,16 +252,13 @@
                 this.classList.add('active');
                 document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
                 document.getElementById('panel-' + this.dataset.panel).classList.add('active');
-                // 切换到插件面板时加载数据
                 if (this.dataset.panel === 'plugins') {
                     loadPluginsData();
                 }
             });
         });
 
-        // ============================================================
         // 插件子标签切换
-        // ============================================================
         document.querySelectorAll('#pluginSubTabs .sub-tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('#pluginSubTabs .sub-tab').forEach(t => t.classList.remove('active'));
@@ -373,7 +364,7 @@
         }
 
         // ============================================================
-        // 产品 CRUD
+        // 产品 CRUD（所有函数挂载到 window）
         // ============================================================
         window.openProductModal = function(index) {
             const isEdit = index !== undefined;
@@ -568,12 +559,15 @@
         }
 
         // ============================================================
-        // 自动登录
+        // 自动登录（如果已存储 Token）
         // ============================================================
         if (token) {
             (async () => {
                 try {
-                    await getFileContent('README.md', token);
+                    const testRes = await fetch('https://api.github.com/user', {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    if (!testRes.ok) throw new Error('Token 无效');
                     document.getElementById('loginSection').style.display = 'none';
                     document.getElementById('adminSection').style.display = 'block';
                     loadAllData();
