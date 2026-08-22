@@ -7,4 +7,12 @@
     "max_servers": 1,
     "activated_servers": []
   }
+  {
+    "id": 2,
+    "license_key": "G0FMDFAQXFCYLTFDQCExUYSxX2NBTFE", 
+    "product_id": 1,
+    "expiry_date": "3027-12-31",
+    "max_servers": 1,
+    "activated_servers": []
+  }
 ]
