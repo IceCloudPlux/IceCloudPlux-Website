@@ -1,22 +1,12 @@
 [
   {
     "id": 1,
-    "name": "BedWarsHeypixel",
-    "description": "é«ä»¿ç§å¸åå²æå¡å¨èµ·åºæäºæä»¶ï¼åºäºBedWars1058ä¿®æ¹ã",
-    "version": "26.7",
-    "mc_version": "1.20.1",
-    "price": 16,
-    "date": "2026-07-31",
-    "download_url": "https://example.com/bedwars-26.7.jar"
-  },
-  {
-    "id": 2,
     "name": "BedWarsHeyPixel",
-    "version": "26.9",
-    "mc_version": "1.8~1.21.4",
-    "price": 16,
     "description": "一个好用、高配置度、灵活的起床战争二次开发版本插件",
+    "version": "26.9",
+    "mc_version": "1.8 - 1.21.4",
     "date": "2026-09-26",
-    "download_url": "http://cdn.gtplux.qd.je/bwh"
+    "price": 16,
+    "buy_url": "https://afdian.com/item/fedde55e9e9811f1a73252540025c377"
   }
 ]
