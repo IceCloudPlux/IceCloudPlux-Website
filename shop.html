@@ -6,6 +6,42 @@
     <title>GtPlux · 插件商店</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* ===== CSS 变量（与全站风格一致） ===== */
+        :root {
+            --bg-primary: #0b0d15;
+            --bg-secondary: #131620;
+            --bg-card: rgba(255,255,255,0.04);
+            --bg-nav: rgba(11,13,21,0.0);
+            --text-primary: #e8eaf0;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border-color: rgba(255,255,255,0.06);
+            --accent: #7c3aed;
+            --accent-light: #a78bfa;
+            --accent-gradient: linear-gradient(135deg, #7c3aed, #a855f7);
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+            --shadow-hover: 0 8px 32px rgba(124,58,237,0.35);
+            --radius: 16px;
+            --transition: 0.25s ease;
+            --nav-blur: 12px;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(0,0,0,0.03);
+            --bg-nav: rgba(248,250,252,0.0);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: rgba(0,0,0,0.06);
+            --accent: #7c3aed;
+            --accent-light: #8b5cf6;
+            --shadow: 0 4px 24px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 32px rgba(124,58,237,0.2);
+        }
+
+        /* ===== 产品网格 ===== */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -70,16 +106,77 @@
             cursor: not-allowed;
             transform: none;
         }
+
+        /* ===== 加载状态 ===== */
+        .loading-box {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 0;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ===== 导航栏（与 style.css 中的 .navbar 配合） ===== */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            padding: 16px 0;
+            transition: background 0.3s, box-shadow 0.3s, border-color 0.3s;
+            background: var(--bg-nav);
+            border-bottom: 1px solid transparent;
+        }
+        .navbar.scrolled {
+            background: var(--bg-secondary);
+            border-bottom-color: var(--border-color);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        [data-theme="light"] .navbar.scrolled { background: rgba(255,255,255,0.85); backdrop-filter: blur(var(--nav-blur)); }
+        [data-theme="dark"] .navbar.scrolled { background: rgba(11,13,21,0.85); backdrop-filter: blur(var(--nav-blur)); }
+        .navbar .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .brand { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .brand .highlight { color: var(--accent-light); }
+        .nav-links { display: flex; align-items: center; gap: 20px; font-size: 0.95rem; flex-wrap: wrap; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-divider { width: 1px; height: 24px; background: var(--border-color); }
+
+        /* 主题切换开关 */
+        .theme-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+        .theme-toggle .toggle-track {
+            width: 40px; height: 22px; border-radius: 30px;
+            background: var(--border-color); position: relative; transition: background 0.3s;
+        }
+        .theme-toggle .toggle-thumb {
+            width: 18px; height: 18px; border-radius: 50%; background: white;
+            position: absolute; top: 2px; left: 2px;
+            transition: transform 0.3s, background 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        [data-theme="dark"] .theme-toggle .toggle-track { background: var(--accent); }
+        [data-theme="dark"] .theme-toggle .toggle-thumb { transform: translateX(18px); }
     </style>
 </head>
 <body>
 
+    <!-- ===== 导航栏 ===== -->
     <nav class="navbar" id="navbar">
         <div class="container">
-            <a href="/shop.html" class="brand"><span class="highlight">IceCloud</span> &amp; Plux</a>
+            <!-- 品牌链接改为跳转首页 -->
+            <a href="/" class="brand">
+                <span class="highlight">IceCloud</span>&nbsp;&amp;&nbsp;Plux
+            </a>
             <div class="nav-links">
+                <a href="/">首页</a>
                 <a href="/shop.html">商店</a>
-                <a href="/dashboard.html">仪表盘</a>
                 <a href="/admin.html">管理</a>
                 <span class="nav-divider"></span>
                 <div class="theme-toggle" id="themeToggle" role="button" tabindex="0" aria-label="切换主题">
@@ -89,21 +186,30 @@
         </div>
     </nav>
 
+    <!-- ===== Hero ===== -->
     <section class="hero" style="padding: 120px 0 40px; text-align: center;">
         <div class="container">
             <h1 style="font-size: 3rem; font-weight: 800;">
-                <span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">IceCloud</span>
+                <span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">IceCloud</span>
                 &amp; <span style="color: var(--accent-light);">Plux</span>
             </h1>
-            <p style="color: var(--text-secondary); font-size: 1.2rem; max-width: 600px; margin: 16px auto;">专业 Minecraft 插件 · 持续更新 · 优质服务</p>
+            <p style="color: var(--text-secondary); font-size: 1.2rem; max-width: 600px; margin: 16px auto;">
+                专业 Minecraft 插件 · 持续更新 · 优质服务
+            </p>
         </div>
     </section>
 
+    <!-- ===== 产品列表 ===== -->
     <section class="container" style="padding: 20px 0 60px;">
         <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 8px;">🛒 所有插件</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 24px;">选择你需要的插件，立即购买，自动发货。</p>
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">
+            选择你需要的插件，点击“立即购买”跳转到付款页面。
+        </p>
         <div id="productsContainer" class="product-grid">
-            <!-- 动态渲染 -->
+            <div class="loading-box">
+                <div class="loading-spinner"></div>
+                <div>正在加载插件列表…</div>
+            </div>
         </div>
     </section>
 
@@ -113,75 +219,191 @@
         </div>
     </footer>
 
-    <script src="js/common.js"></script>
     <script>
-        initTheme();
-        initNavbarScroll();
-        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        /* ==========================================================
+           自包含脚本：主题切换 + 导航栏滚动 + 产品加载 + 购买跳转
+           不依赖 js/common.js
+           ========================================================== */
+        (function() {
+            // ---------- 主题切换 ----------
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            html.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
 
-        const userToken = getToken();
+            function applyTheme(theme) {
+                html.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            themeToggle.addEventListener('click', () => {
+                applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            });
+            themeToggle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); themeToggle.click(); }
+            });
 
-        async function loadProducts() {
-            const products = await loadData('products');
+            // ---------- 导航栏滚动效果 ----------
+            const navbar = document.getElementById('navbar');
+            function onScroll() {
+                navbar.classList.toggle('scrolled', window.pageYOffset > 20);
+            }
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+
+            // ---------- 购买链接（可选全局默认） ----------
+            // 如果产品 JSON 中没有 buy_url 字段，则使用此默认地址
+            const DEFAULT_BUY_URL = 'https://afdian.com/a/reationura'; // ← 请改成你的爱发电或付款链接
+
+            // ---------- 产品数据路径（按优先级尝试） ----------
+            const PRODUCT_PATHS = [
+                '_data/products.json',
+                'data/products.json',
+                'products.json'
+            ];
+
+            // ---------- 缓存键 ----------
+            const CACHE_KEY = 'gtplux_products_cache_v1';
+            const CACHE_TIME_KEY = 'gtplux_products_time_v1';
+            const CACHE_TTL = 5 * 60 * 1000; // 5 分钟内直接用缓存
+
             const container = document.getElementById('productsContainer');
-            if (!products || products.length === 0) {
-                container.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--text-muted);">暂无产品</p>`;
-                return;
-            }
-            container.innerHTML = products.map(p => `
-                <div class="product-card">
-                    <h3>${escapeHtml(p.name)}</h3>
-                    <div class="desc">${escapeHtml(p.description || '')}</div>
-                    <div class="meta">
-                        <span>版本 ${escapeHtml(p.version)}</span>
-                        <span>MC ${escapeHtml(p.mc_version)}</span>
-                        <span>${escapeHtml(p.date)}</span>
-                    </div>
-                    <div class="price">¥${Number(p.price).toFixed(2)}</div>
-                    <button class="btn-buy" data-id="${p.id}" onclick="buyProduct(${p.id})">立即购买</button>
-                </div>
-            `).join('');
-        }
 
-        async function buyProduct(productId) {
-            if (!userToken) {
-                alert('请先登录管理后台获取 GitHub Token，或联系管理员购买。');
-                return;
+            // ---------- 工具：安全转义 ----------
+            function escapeHtml(text) {
+                if (text === null || text === undefined) return '';
+                const div = document.createElement('div');
+                div.textContent = String(text);
+                return div.innerHTML;
             }
-            const btn = document.querySelector(`.btn-buy[data-id="${productId}"]`);
-            btn.disabled = true;
-            btn.textContent = '创建订单...';
-            try {
-                const res = await fetch('/api/create_order', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${userToken}`
-                    },
-                    body: JSON.stringify({ productId })
-                });
-                const data = await res.json();
-                if (data.pay_url) {
-                    window.location.href = data.pay_url;
-                } else {
-                    alert('创建订单失败：' + (data.error || '未知错误'));
+
+            // ---------- 工具：修复 UTF-8 乱码 ----------
+            // 关键：用 TextDecoder 明确按 UTF-8 解码，避免浏览器按 Latin-1 解码导致中文乱码
+            async function fetchJsonUtf8(url) {
+                const res = await fetch(url, { cache: 'no-cache' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const buffer = await res.arrayBuffer();
+                const text = new TextDecoder('utf-8').decode(buffer);
+                return JSON.parse(text);
+            }
+
+            // ---------- 从多个路径尝试加载 ----------
+            async function loadProductsFromServer() {
+                let lastErr = null;
+                for (const path of PRODUCT_PATHS) {
+                    try {
+                        const data = await fetchJsonUtf8(path);
+                        if (Array.isArray(data)) return data;
+                        // 兼容 { products: [...] } 结构
+                        if (data && Array.isArray(data.products)) return data.products;
+                    } catch (err) {
+                        lastErr = err;
+                    }
                 }
-            } catch (err) {
-                alert('请求失败：' + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '立即购买';
+                throw lastErr || new Error('未找到产品数据文件');
             }
-        }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+            // ---------- 渲染产品卡片 ----------
+            function renderProducts(products) {
+                if (!products || products.length === 0) {
+                    container.innerHTML = `
+                        <p style="grid-column:1/-1; text-align:center; color:var(--text-muted); padding:40px 0;">
+                            暂无产品，请稍后再来看看～
+                        </p>`;
+                    return;
+                }
 
-        loadProducts();
+                container.innerHTML = products.map(p => {
+                    // 购买链接优先级：buy_url > purchase_url > 全局默认
+                    const buyUrl = p.buy_url || p.purchase_url || DEFAULT_BUY_URL;
+                    const price = Number(p.price);
+                    const priceText = isNaN(price) ? '免费' : '¥' + price.toFixed(2);
+
+                    return `
+                        <div class="product-card">
+                            <h3>${escapeHtml(p.name)}</h3>
+                            <div class="desc">${escapeHtml(p.description || '')}</div>
+                            <div class="meta">
+                                ${p.version ? `<span>版本 ${escapeHtml(p.version)}</span>` : ''}
+                                ${p.mc_version ? `<span>MC ${escapeHtml(p.mc_version)}</span>` : ''}
+                                ${p.date ? `<span>${escapeHtml(p.date)}</span>` : ''}
+                            </div>
+                            <div class="price">${priceText}</div>
+                            <button class="btn-buy" data-url="${escapeHtml(buyUrl)}" data-name="${escapeHtml(p.name)}">
+                                立即购买
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+
+                // 绑定购买事件（用事件委托，避免每次都重新绑定）
+                container.querySelectorAll('.btn-buy').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const url = btn.getAttribute('data-url');
+                        const name = btn.getAttribute('data-name');
+                        if (!url) {
+                            alert('该产品暂未配置购买链接，请联系管理员。');
+                            return;
+                        }
+                        if (confirm(`即将跳转到购买页面：\n\n${name}\n\n确定继续吗？`)) {
+                            window.open(url, '_blank');
+                        }
+                    });
+                });
+            }
+
+            // ---------- 主加载逻辑 ----------
+            async function initProducts() {
+                // 1. 尝试读取缓存（快速显示）
+                const cachedData = sessionStorage.getItem(CACHE_KEY);
+                const cachedTime = parseInt(sessionStorage.getItem(CACHE_TIME_KEY) || '0', 10);
+                const now = Date.now();
+
+                if (cachedData) {
+                    try {
+                        const products = JSON.parse(cachedData);
+                        renderProducts(products);
+
+                        // 缓存还新鲜，直接结束（后台不刷新）
+                        if (now - cachedTime < CACHE_TTL) return;
+
+                        // 缓存过期：后台静默刷新
+                        refreshInBackground();
+                        return;
+                    } catch (e) {
+                        sessionStorage.removeItem(CACHE_KEY);
+                    }
+                }
+
+                // 2. 没有缓存：显示加载动画，正式加载
+                try {
+                    const products = await loadProductsFromServer();
+                    sessionStorage.setItem(CACHE_KEY, JSON.stringify(products));
+                    sessionStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
+                    renderProducts(products);
+                } catch (err) {
+                    console.error(err);
+                    container.innerHTML = `
+                        <p style="grid-column:1/-1; text-align:center; color:#ef4444; padding:40px 0;">
+                            加载失败：${escapeHtml(err.message)}<br>
+                            <small style="color:var(--text-muted);">请检查 _data/products.json 是否存在</small>
+                        </p>`;
+                }
+            }
+
+            // 后台静默刷新（不阻塞 UI）
+            async function refreshInBackground() {
+                try {
+                    const products = await loadProductsFromServer();
+                    sessionStorage.setItem(CACHE_KEY, JSON.stringify(products));
+                    sessionStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
+                    renderProducts(products);
+                } catch (err) {
+                    console.warn('后台刷新失败：', err);
+                }
+            }
+
+            // ---------- 启动 ----------
+            initProducts();
+        })();
     </script>
 </body>
 </html>
